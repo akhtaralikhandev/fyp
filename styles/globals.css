@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.studentlist_tr:nth-child(even) {
+  background-color: rgb(181, 194, 207);
+}
