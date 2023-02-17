@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Student {
+  reg_no           Int         @unique
+  name             String
+  email            String      @unique
+  password         String
+  batch_no         Int
+  departement_name String?     @unique
+  departement      Department? @relation(fields: [departement_name], references: [name])
+  projectId        Int?
+  project          Project?    @relation(fields: [projectId], references: [id])
+}
+
+// model User {
+//   id   Int     @id @default(autoincrement())
+//   name String?
+// }
+// Define a model for the departments in your university
+model Employee {
+  name         String
+  email        String                @unique
+  password     String
+  departements Employee_Department[]
+  departmentId Int?
+  projects     Employee_Project[]
+  role         EmployeeRole?         @default(COORDINATOR)
+}
+
+model Department {
+  id                Int                   @id @unique @default(autoincrement())
+  name              String                @unique
+  coordinator_email String                @unique @default("abc@gmail.com")
+  projects          Project[]
+  Coordinator       Coordinator[]
+  employees         Employee_Department[]
+  students          Student[]
+}
+
+model Employee_Department {
+  employee_email  String
+  department_name String
+  employee        Employee   @relation(fields: [employee_email], references: [email])
+  departement     Department @relation(fields: [department_name], references: [name])
+
+  @@id([department_name, employee_email])
+}
+
+model Project {
+  id           Int                @id @default(autoincrement())
+  name         String
+  description  String
+  status       ProjectStatus      @default(IN_PROGRESS)
+  department   Department         @relation(fields: [departmentId], references: [id])
+  departmentId Int                @unique
+  students     Student[]
+  employee     Employee_Project[]
+}
+
+model Employee_Project {
+  project_id     Int
+  project        Project  @relation(fields: [project_id], references: [id])
+  employee_email String
+  employee       Employee @relation(fields: [employee_email], references: [email])
+
+  @@id([project_id, employee_email])
+}
+
+// Define a model for the departments
+
+// Define a model for the students who will form project groups
+
+// Define a model for the projects that will be created by student groups
+
+// Define a model for the coordinator, who is a type of employee
+model Coordinator {
+  id           Int        @id @default(autoincrement())
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId Int
+}
+
+// Define an enum for the role of each employee (coordinator, advisor, or co-advisor)
+enum EmployeeRole {
+  COORDINATOR
+  ADVISOR
+  CO_ADVISOR
+}
+
+// Define an enum for the status of each project
+enum ProjectStatus {
+  IN_PROGRESS
+  COMPLETED
+}
