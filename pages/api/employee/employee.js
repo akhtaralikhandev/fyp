@@ -3,20 +3,18 @@ const prisma = new PrismaClient();
 const handler = async (req, res) => {
   if (req.method === "POST") {
     try {
-      const { name, departement_name, password, email, contact_no, reg_no } =
-        req.body;
-      const student = await prisma.student.create({
+      const { name, password, email, contact_no, role } = req.body;
+      const employee = await prisma.employee.create({
         data: {
           name: name,
           email: email,
           password: password,
-          departement_name: departement_name,
-          reg_no: parseInt(reg_no),
+          role: role,
           contact_no: contact_no,
         },
       });
-      console.log(student);
-      res.status(200).json(student);
+      console.log(employee);
+      res.status(200).json(employee);
     } catch (error) {
       console.log(error);
       res.status(500).json(error.message);
@@ -24,24 +22,24 @@ const handler = async (req, res) => {
   } else if (req.method === "PUT") {
     try {
       const { email, data } = req.body;
-      const student = await prisma.student.update({
+      const employee = await prisma.employee.update({
         where: { email: email },
         data: { ...data },
       });
-      if (!student) return res.status(404).json("No student found");
-      res.status(200).json(student);
+      if (!employee) return res.status(404).json("No student found");
+      res.status(200).json(employee);
     } catch (error) {
       res.status(500).json(error);
     }
   } else if (req.method === "DELETE") {
     try {
       const { email } = req.body;
-      const student = await prisma.student.delete({
+      const employee = await prisma.employee.delete({
         where: {
           email: email,
         },
       });
-      res.status(200).json("Student deleted");
+      res.status(200).json("Employee deleted");
     } catch (error) {
       res.status(500).json(error);
     }

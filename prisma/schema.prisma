@@ -15,8 +15,8 @@ model Student {
   name             String
   email            String      @unique
   password         String
-  batch_no         Int
-  departement_name String?     @unique
+  contact_no       String      @unique
+  departement_name String?
   departement      Department? @relation(fields: [departement_name], references: [name])
   projectId        Int?
   project          Project?    @relation(fields: [projectId], references: [id])
@@ -28,13 +28,14 @@ model Student {
 // }
 // Define a model for the departments in your university
 model Employee {
-  name         String
-  email        String                @unique
-  password     String
-  departements Employee_Department[]
-  departmentId Int?
-  projects     Employee_Project[]
-  role         EmployeeRole?         @default(COORDINATOR)
+  name          String
+  email         String                @unique
+  password      String
+  contact_no    String                @unique
+  departements  Employee_Department[]
+  department_Id Int?
+  projects      Employee_Project[]
+  role          EmployeeRole?         @default(COORDINATOR)
 }
 
 model Department {
@@ -57,14 +58,15 @@ model Employee_Department {
 }
 
 model Project {
-  id           Int                @id @default(autoincrement())
-  name         String
-  description  String
-  status       ProjectStatus      @default(IN_PROGRESS)
-  department   Department         @relation(fields: [departmentId], references: [id])
-  departmentId Int                @unique
-  students     Student[]
-  employee     Employee_Project[]
+  id              Int                @id @default(autoincrement())
+  title           String
+  description     String
+  status          ProjectStatus      @default(IN_PROGRESS)
+  department      Department         @relation(fields: [department_name], references: [name])
+  department_name String
+  student_email   String
+  students        Student[]
+  employee        Employee_Project[]
 }
 
 model Employee_Project {

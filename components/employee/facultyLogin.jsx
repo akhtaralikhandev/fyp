@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import * as Yup from "yup";
-import { sendContactForm } from "../lib/api";
+import { sendContactForm } from "../../lib/api";
 const Faculty_Login = () => {
   const router = useRouter();
   const formik = useFormik({

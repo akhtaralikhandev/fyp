@@ -5,3 +5,6 @@
 .studentlist_tr:nth-child(even) {
   background-color: rgb(181, 194, 207);
 }
+.createOrJoinGroup {
+  height: 100vh;
+}

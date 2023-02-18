@@ -1,6 +1,6 @@
 import Head from "next/head";
+import Register2 from "./student/register";
 
-import Register from "../components/register";
 import Select_Category from "../components/select_category";
 
 export default function Home() {

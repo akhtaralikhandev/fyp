@@ -2,8 +2,8 @@ import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import * as Yup from "yup";
-import { sendContactForm } from "../lib/api";
-const Register = () => {
+import { sendContactForm } from "../../lib/api";
+const Faculty_Register = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -52,7 +52,7 @@ const Register = () => {
         >
           <div className="form_wrapper pt-4 pb-0 md:flex-nowrap flex-wrap justify-start items-start  flex flex-col gap-6 rounded-lg md:p-8 w-full p-4 ">
             <span className="text-2xl sm:text-3xl md:text-4xl">
-              Register For Final Year Project
+              Register As Faculty For Final Year Project
             </span>
             <div className="flex sm:flex-row flex-col gap-4 w-full">
               <div className="flex flex-col md:flex-nowrap flex-wrap flex-1">
@@ -178,17 +178,15 @@ const Register = () => {
               >
                 Submit
               </button>{" "}
-              <div>
-                <span className="md:text-xl">
-                  Having account{" "}
-                  <span
-                    onClick={() => router.push("/student/login")}
-                    className="text-blue-600 hover:text-blue-800 cursor-pointer"
-                  >
-                    login here
-                  </span>
+              <span className="md:text-xl">
+                Having account{" "}
+                <span
+                  onClick={() => router.push("/faculty/login")}
+                  className="text-blue-600 hover:text-blue-800 cursor-pointer"
+                >
+                  login here
                 </span>
-              </div>
+              </span>
             </div>
           </div>
         </form>{" "}
@@ -197,4 +195,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Faculty_Register;

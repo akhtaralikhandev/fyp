@@ -2,35 +2,30 @@ import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import * as Yup from "yup";
-import { sendContactForm } from "../lib/api";
+import { createStudent } from "../../lib/student/register";
+
 const Faculty_Register = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      name: "",
       email: "",
-      regNo: "",
-      faculty: "",
-      phoneNo: "",
+      reg_no: "",
+      password: "",
+      batch_no: "",
     },
     validationSchema: Yup.object({
-      firstName: Yup.string()
+      name: Yup.string()
         .max(15, "must be 15 characters or less")
         .required("Required"),
-      lastName: Yup.string()
-        .max(10, "must be less than 10")
-        .required("Required"),
+
       email: Yup.string().max(15, "must be less than 15").required("Required"),
-      regNo: Yup.string()
+      reg_no: Yup.string()
         .max(15, "must be 15 characters or less")
-        .required("Required"),
-      phoneNo: Yup.number()
-        .max(10, "must be less than 10")
         .required("Required"),
     }),
     onSubmit: async (values) => {
-      await sendContactForm(values);
+      await createStudent(values);
     },
   });
   console.log(formik.values.firstName);
@@ -58,33 +53,16 @@ const Faculty_Register = () => {
               <div className="flex flex-col md:flex-nowrap flex-wrap flex-1">
                 <input
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="name"
+                  name="name"
                   className="p-3 outline-blue-500"
-                  placeholder="First Name"
-                  value={formik.values.firstName}
+                  placeholder="name"
+                  value={formik.values.name}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.firstName && formik.errors.firstName ? (
-                  <p className="text-red-500">{formik.errors.firstName}</p>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="flex flex-col flex-1">
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  className="p-3 outline-blue-500"
-                  placeholder="Last Name"
-                  value={formik.values.lastName}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.touched.lastName && formik.errors.lastName ? (
-                  <p className="text-red-500">{formik.errors.lastName}</p>
+                {formik.touched.name && formik.errors.name ? (
+                  <p className="text-red-500">{formik.errors.name}</p>
                 ) : (
                   ""
                 )}
@@ -94,16 +72,16 @@ const Faculty_Register = () => {
               <div className="flex flex-col flex-1">
                 <input
                   type="text"
-                  id="regNo"
-                  name="regNo"
+                  id="reg_no"
+                  name="reg_no"
                   className="p-3 outline-blue-500"
                   placeholder="Reg No"
-                  value={formik.values.regNo}
+                  value={formik.values.reg_no}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.regNo && formik.errors.regNo ? (
-                  <p className="text-red-500">{formik.errors.regNo}</p>
+                {formik.touched.reg_no && formik.errors.reg_no ? (
+                  <p className="text-red-500">{formik.errors.reg_no}</p>
                 ) : (
                   ""
                 )}
@@ -111,16 +89,16 @@ const Faculty_Register = () => {
               <div className="flex flex-col flex-1">
                 <input
                   type="number"
-                  id="phoneNo"
-                  name="phoneNo"
+                  id="batch_no"
+                  name="batch_no"
                   className="p-3 outline-blue-500"
-                  placeholder="Phone No"
-                  value={formik.values.phoneNo}
+                  placeholder="batch no"
+                  value={formik.values.batch_no}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.phoneNo && formik.errors.phoneNo ? (
-                  <p className="text-red-500">{formik.errors.phoneNo}</p>
+                {formik.touched.batch_no && formik.errors.batch_no ? (
+                  <p className="text-red-500">{formik.errors.batch_no}</p>
                 ) : (
                   ""
                 )}
