@@ -1,9 +1,12 @@
 import { useFormik } from "formik";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import * as Yup from "yup";
 import { sendContactForm } from "../../lib/api";
+import { loginStudent } from "../../lib/student/login";
 const Login = () => {
+  const mutateSession = useSession();
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -12,15 +15,25 @@ const Login = () => {
     },
     validationSchema: Yup.object({
       email: Yup.string().max(15, "must be less than 15").required("Required"),
-      regNo: Yup.string()
-        .max(15, "must be 15 characters or less")
-        .required("Required"),
       password: Yup.string()
         .max(10, "must be less than 10")
         .required("Required"),
     }),
     onSubmit: async (values) => {
-      await sendContactForm(values);
+      try {
+        const response = await loginStudent(values);
+        console.log(response);
+        if (response?.session) {
+          window.sessionStorage.setItem(
+            "session",
+            JSON.stringify(response.session)
+          );
+          await mutateSession();
+          router.push("/");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 

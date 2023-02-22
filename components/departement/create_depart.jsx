@@ -39,7 +39,7 @@ const Create_depart = () => {
             </span>
             <div className="flex flex-col w-full">
               <input
-                type="text"
+                type="email"
                 id="coordinator_email"
                 name="coordinator_email"
                 className="p-3 outline-blue-500"

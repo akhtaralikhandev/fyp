@@ -12,6 +12,7 @@ datasource db {
 
 model Student {
   reg_no           Int         @unique
+  role             String      @default("student")
   name             String
   email            String      @unique
   password         String
@@ -28,14 +29,15 @@ model Student {
 // }
 // Define a model for the departments in your university
 model Employee {
-  name          String
-  email         String                @unique
-  password      String
-  contact_no    String                @unique
-  departements  Employee_Department[]
-  department_Id Int?
-  projects      Employee_Project[]
-  role          EmployeeRole?         @default(COORDINATOR)
+  name             String
+  email            String                @unique
+  password         String
+  role             String                @default("employee")
+  contact_no       String                @unique
+  departements     Employee_Department[]
+  departement_name String?
+  projects         Employee_Project[]
+  role2            EmployeeRole?         @default(COORDINATOR)
 }
 
 model Department {
@@ -43,7 +45,7 @@ model Department {
   name              String                @unique
   coordinator_email String                @unique @default("abc@gmail.com")
   projects          Project[]
-  Coordinator       Coordinator[]
+  Coordinator       Coordinator?
   employees         Employee_Department[]
   students          Student[]
 }
@@ -64,7 +66,6 @@ model Project {
   status          ProjectStatus      @default(IN_PROGRESS)
   department      Department         @relation(fields: [department_name], references: [name])
   department_name String
-  student_email   String
   students        Student[]
   employee        Employee_Project[]
 }
@@ -88,7 +89,7 @@ model Employee_Project {
 model Coordinator {
   id           Int        @id @default(autoincrement())
   department   Department @relation(fields: [departmentId], references: [id])
-  departmentId Int
+  departmentId Int        @unique
 }
 
 // Define an enum for the role of each employee (coordinator, advisor, or co-advisor)

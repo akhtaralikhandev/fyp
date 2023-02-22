@@ -1,5 +1,4 @@
-import Register from "../../pages/student/register";
-
+import Register from "../../components/student/register";
 const Register2 = () => {
   return (
     <>

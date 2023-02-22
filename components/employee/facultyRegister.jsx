@@ -2,39 +2,41 @@ import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import * as Yup from "yup";
-import { sendContactForm } from "../../lib/api";
+import { registerEmployee } from "../../lib/employee/login";
+const options = [
+  { value: "FME", label: "FME" },
+  { value: "FCSE", label: "FCSE" },
+  { value: "FEE", label: "FEE" },
+];
 const Faculty_Register = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      name: "",
       email: "",
-      regNo: "",
-      faculty: "",
-      phoneNo: "",
+      password: "",
+      contact_no: "",
+      role: "",
+      departement_name: "",
     },
     validationSchema: Yup.object({
-      firstName: Yup.string()
+      name: Yup.string()
         .max(15, "must be 15 characters or less")
         .required("Required"),
-      lastName: Yup.string()
-        .max(10, "must be less than 10")
+      email: Yup.string().max(10, "must be less than 10").required("Required"),
+      password: Yup.string()
+        .max(15, "must be less than 15")
         .required("Required"),
-      email: Yup.string().max(15, "must be less than 15").required("Required"),
-      regNo: Yup.string()
+      contact_no: Yup.string()
         .max(15, "must be 15 characters or less")
         .required("Required"),
-      phoneNo: Yup.number()
-        .max(10, "must be less than 10")
-        .required("Required"),
+      role: Yup.string().notRequired(),
     }),
     onSubmit: async (values) => {
-      await sendContactForm(values);
+      console.log("clicked");
+      await registerEmployee(values);
     },
   });
-  console.log(formik.values.firstName);
-  console.log(formik.touched);
   return (
     <div>
       <div className="wrapper flex gap-0 md:gap-24  p-4 md:p-14 h-full w-full">
@@ -58,33 +60,33 @@ const Faculty_Register = () => {
               <div className="flex flex-col md:flex-nowrap flex-wrap flex-1">
                 <input
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="name"
+                  name="name"
                   className="p-3 outline-blue-500"
-                  placeholder="First Name"
-                  value={formik.values.firstName}
+                  placeholder="name"
+                  value={formik.values.name}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.firstName && formik.errors.firstName ? (
-                  <p className="text-red-500">{formik.errors.firstName}</p>
+                {formik.touched.name && formik.errors.name ? (
+                  <p className="text-red-500">{formik.errors.name}</p>
                 ) : (
                   ""
                 )}
               </div>
               <div className="flex flex-col flex-1">
                 <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
+                  type="email"
+                  id="email"
+                  name="email"
                   className="p-3 outline-blue-500"
-                  placeholder="Last Name"
-                  value={formik.values.lastName}
+                  placeholder="email"
+                  value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.lastName && formik.errors.lastName ? (
-                  <p className="text-red-500">{formik.errors.lastName}</p>
+                {formik.touched.email && formik.errors.email ? (
+                  <p className="text-red-500">{formik.errors.email}</p>
                 ) : (
                   ""
                 )}
@@ -93,34 +95,34 @@ const Faculty_Register = () => {
             <div className="flex gap-4 sm:flex-row flex-col w-full">
               <div className="flex flex-col flex-1">
                 <input
-                  type="text"
-                  id="regNo"
-                  name="regNo"
+                  type="password"
+                  id="password"
+                  name="password"
                   className="p-3 outline-blue-500"
-                  placeholder="Reg No"
-                  value={formik.values.regNo}
+                  placeholder="password"
+                  value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.regNo && formik.errors.regNo ? (
-                  <p className="text-red-500">{formik.errors.regNo}</p>
+                {formik.touched.password && formik.errors.password ? (
+                  <p className="text-red-500">{formik.errors.password}</p>
                 ) : (
                   ""
                 )}
               </div>
               <div className="flex flex-col flex-1">
                 <input
-                  type="number"
-                  id="phoneNo"
-                  name="phoneNo"
+                  type="text"
+                  id="contact_no"
+                  name="contact_no"
                   className="p-3 outline-blue-500"
-                  placeholder="Phone No"
-                  value={formik.values.phoneNo}
+                  placeholder="contact no"
+                  value={formik.values.contact_no}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                {formik.touched.phoneNo && formik.errors.phoneNo ? (
-                  <p className="text-red-500">{formik.errors.phoneNo}</p>
+                {formik.touched.contact_no && formik.errors.contact_no ? (
+                  <p className="text-red-500">{formik.errors.contact_no}</p>
                 ) : (
                   ""
                 )}
@@ -129,44 +131,38 @@ const Faculty_Register = () => {
             <div className="flex flex-col w-full">
               <input
                 type="text"
-                id="email"
-                name="email"
+                id="role"
+                name="role"
                 className="p-3 outline-blue-500"
-                placeholder="Email"
-                value={formik.values.email}
+                placeholder="role"
+                value={formik.values.role}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              {formik.touched.email && formik.errors.email ? (
-                <p className="text-red-600">{formik.errors.email}</p>
+              {formik.touched.role && formik.errors.role ? (
+                <p className="text-red-600">{formik.errors.role}</p>
               ) : (
                 ""
               )}
             </div>
             <div className="flex flex-col w-full">
-              <label htmlFor="cars">Faculty*</label>
-              <select className="p-3  outline-blue-500" name="cars" id="cars">
-                <option className="p-2 cursor-pointer" value="volvo">
-                  FES
-                </option>
-                <option className="p-2 cursor-pointer" value="saab">
-                  FCE
-                </option>
-                <option className="p-2 cursor-pointer" value="opel">
-                  FEE
-                </option>
-                <option className="p-2 cursor-pointer" value="audi">
-                  FME
-                </option>
-                <option className="p-2 cursor-pointer" value="opel">
-                  MGS
-                </option>
-                <option className="p-2 cursor-pointer" value="audi">
-                  FCE
-                </option>
+              <select
+                id="departement_name"
+                name="departement_name"
+                className="p-3 outline-blue-500"
+                value={formik.values.departement_name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              >
+                {options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
-              {formik.touched.email && formik.errors.email ? (
-                <p className="text-red-600">{formik.errors.email}</p>
+              {formik.touched.departement_name &&
+              formik.errors.departement_name ? (
+                <p className="text-red-600">{formik.errors.departement_name}</p>
               ) : (
                 ""
               )}

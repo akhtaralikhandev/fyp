@@ -1,4 +1,4 @@
-import Faculty_Register from "../../components/facultyRegister";
+import Faculty_Register from "../../components/employee/facultyRegister";
 
 const FacultyRegister = () => {
   return (

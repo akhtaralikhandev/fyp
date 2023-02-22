@@ -13,6 +13,7 @@ const handler = async (req, res) => {
       res.status(200).json(student);
     } catch (error) {
       res.status(500).json(error.message);
+      console.log(error.message);
     }
   } else if (req.method === "GET") {
     try {

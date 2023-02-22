@@ -3,14 +3,14 @@ const prisma = new PrismaClient();
 const handler = async (req, res) => {
   if (req.method === "POST") {
     try {
-      const { name, password, email, contact_no, role } = req.body;
+      const { name, password, email, contact_no, departement_name } = req.body;
       const employee = await prisma.employee.create({
         data: {
           name: name,
           email: email,
           password: password,
-          role: role,
           contact_no: contact_no,
+          departement_name: departement_name,
         },
       });
       console.log(employee);

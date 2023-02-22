@@ -1,10 +1,17 @@
 import { useFormik } from "formik";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import * as Yup from "yup";
 import { createStudent } from "../../lib/student/register";
-
+const options = [
+  { value: "FME", label: "FME" },
+  { value: "FCSE", label: "FCSE" },
+  { value: "FEE", label: "FEE" },
+];
 const Faculty_Register = () => {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isFailure, setIsFailure] = useState(false);
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -12,20 +19,40 @@ const Faculty_Register = () => {
       email: "",
       reg_no: "",
       password: "",
-      batch_no: "",
+      contact_no: "",
+      departement_name: "",
     },
     validationSchema: Yup.object({
       name: Yup.string()
-        .max(15, "must be 15 characters or less")
+        .max(50, "must be 50 characters or less")
         .required("Required"),
 
-      email: Yup.string().max(15, "must be less than 15").required("Required"),
+      email: Yup.string().max(20, "must be less than 21").required("Required"),
       reg_no: Yup.string()
-        .max(15, "must be 15 characters or less")
+        .required("Required")
+        .max(7, "must be 7")
+        .min(7, "cannot be less than 7")
         .required("Required"),
+      password: Yup.string()
+        .max(25, "must be less than 25")
+        .min(8, "must be greater than 8 character")
+        .required("Required"),
+      departement_name: Yup.string().required("Required"),
+      contact_no: Yup.string()
+        .required("required")
+        .max(11, "must be not greater than 11"),
     }),
     onSubmit: async (values) => {
-      await createStudent(values);
+      try {
+        const resp = await createStudent(values);
+        if (resp.status === 200) {
+          setIsSuccess(true);
+          setIsFailure(false);
+        } else {
+        }
+      } catch (error) {
+        setIsFailure(true);
+      }
     },
   });
   console.log(formik.values.firstName);
@@ -47,7 +74,7 @@ const Faculty_Register = () => {
         >
           <div className="form_wrapper pt-4 pb-0 md:flex-nowrap flex-wrap justify-start items-start  flex flex-col gap-6 rounded-lg md:p-8 w-full p-4 ">
             <span className="text-2xl sm:text-3xl md:text-4xl">
-              Register As Faculty For Final Year Project
+              Register As Student For Final Year Project
             </span>
             <div className="flex sm:flex-row flex-col gap-4 w-full">
               <div className="flex flex-col md:flex-nowrap flex-wrap flex-1">
@@ -68,45 +95,10 @@ const Faculty_Register = () => {
                 )}
               </div>
             </div>
-            <div className="flex gap-4 sm:flex-row flex-col w-full">
-              <div className="flex flex-col flex-1">
-                <input
-                  type="text"
-                  id="reg_no"
-                  name="reg_no"
-                  className="p-3 outline-blue-500"
-                  placeholder="Reg No"
-                  value={formik.values.reg_no}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.touched.reg_no && formik.errors.reg_no ? (
-                  <p className="text-red-500">{formik.errors.reg_no}</p>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="flex flex-col flex-1">
-                <input
-                  type="number"
-                  id="batch_no"
-                  name="batch_no"
-                  className="p-3 outline-blue-500"
-                  placeholder="batch no"
-                  value={formik.values.batch_no}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.touched.batch_no && formik.errors.batch_no ? (
-                  <p className="text-red-500">{formik.errors.batch_no}</p>
-                ) : (
-                  ""
-                )}
-              </div>
-            </div>
+
             <div className="flex flex-col w-full">
               <input
-                type="text"
+                type="email"
                 id="email"
                 name="email"
                 className="p-3 outline-blue-500"
@@ -121,30 +113,78 @@ const Faculty_Register = () => {
                 ""
               )}
             </div>
+
+            <div className="flex gap-4 sm:flex-row flex-col w-full">
+              <div className="flex flex-col flex-1">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  className="p-3 outline-blue-500"
+                  placeholder="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                {formik.touched.password && formik.errors.password ? (
+                  <p className="text-red-500">{formik.errors.password}</p>
+                ) : (
+                  ""
+                )}
+              </div>
+              <div className="flex flex-col flex-1">
+                <input
+                  type="number"
+                  id="reg_no"
+                  name="reg_no"
+                  className="p-3 outline-blue-500"
+                  placeholder="reg no"
+                  value={formik.values.reg_no}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                {formik.touched.reg_no && formik.errors.reg_no ? (
+                  <p className="text-red-500">{formik.errors.reg_no}</p>
+                ) : (
+                  ""
+                )}
+              </div>
+            </div>
             <div className="flex flex-col w-full">
-              <label htmlFor="cars">Faculty*</label>
-              <select className="p-3  outline-blue-500" name="cars" id="cars">
-                <option className="p-2 cursor-pointer" value="volvo">
-                  FES
-                </option>
-                <option className="p-2 cursor-pointer" value="saab">
-                  FCE
-                </option>
-                <option className="p-2 cursor-pointer" value="opel">
-                  FEE
-                </option>
-                <option className="p-2 cursor-pointer" value="audi">
-                  FME
-                </option>
-                <option className="p-2 cursor-pointer" value="opel">
-                  MGS
-                </option>
-                <option className="p-2 cursor-pointer" value="audi">
-                  FCE
-                </option>
+              <input
+                type="text"
+                id="contact_no"
+                name="contact_no"
+                className="p-3 outline-blue-500"
+                placeholder="contact no"
+                value={formik.values.contact_no}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.contact_no && formik.errors.contact_no ? (
+                <p className="text-red-600">{formik.errors.contact_no}</p>
+              ) : (
+                ""
+              )}
+            </div>
+            <div className="flex flex-col w-full">
+              <select
+                id="departement_name"
+                name="departement_name"
+                className="p-3 outline-blue-500"
+                value={formik.values.departement_name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              >
+                {options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
-              {formik.touched.email && formik.errors.email ? (
-                <p className="text-red-600">{formik.errors.email}</p>
+              {formik.touched.departement_name &&
+              formik.errors.departement_name ? (
+                <p className="text-red-600">{formik.errors.departement_name}</p>
               ) : (
                 ""
               )}
@@ -159,7 +199,7 @@ const Faculty_Register = () => {
               <span className="md:text-xl">
                 Having account{" "}
                 <span
-                  onClick={() => router.push("/faculty/login")}
+                  onClick={() => router.push("/student/login")}
                   className="text-blue-600 hover:text-blue-800 cursor-pointer"
                 >
                   login here
@@ -168,6 +208,8 @@ const Faculty_Register = () => {
             </div>
           </div>
         </form>{" "}
+        {isSuccess ? <h3>Account created </h3> : ""}
+        {isFailure ? <h3>Account not created</h3> : ""}
       </div>{" "}
     </div>
   );
