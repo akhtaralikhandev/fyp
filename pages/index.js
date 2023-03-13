@@ -1,7 +1,5 @@
 import Head from "next/head";
-import Register2 from "./student/register";
-
-import Select_Category from "../components/select_category";
+import Login_btn from "../components/auth/login_btn";
 
 export default function Home() {
   return (
@@ -12,7 +10,7 @@ export default function Home() {
 
         <meta name="description" content="FYP MANAGEMENT" />
       </Head>
-      <Select_Category />
+      <Login_btn />
     </div>
   );
 }

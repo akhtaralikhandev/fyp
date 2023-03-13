@@ -1,5 +1,6 @@
 import { useFormik } from "formik";
 import Image from "next/image";
+
 import { useRouter } from "next/router";
 import { useState } from "react";
 import * as Yup from "yup";
@@ -20,14 +21,14 @@ const Faculty_Register = () => {
       reg_no: "",
       password: "",
       contact_no: "",
-      departement_name: "",
+      department_name: "",
     },
     validationSchema: Yup.object({
       name: Yup.string()
         .max(50, "must be 50 characters or less")
         .required("Required"),
 
-      email: Yup.string().max(20, "must be less than 21").required("Required"),
+      email: Yup.string().max(40, "must be less than 21").required("Required"),
       reg_no: Yup.string()
         .required("Required")
         .max(7, "must be 7")
@@ -37,7 +38,7 @@ const Faculty_Register = () => {
         .max(25, "must be less than 25")
         .min(8, "must be greater than 8 character")
         .required("Required"),
-      departement_name: Yup.string().required("Required"),
+      department_name: Yup.string().required("Required"),
       contact_no: Yup.string()
         .required("required")
         .max(11, "must be not greater than 11"),
@@ -45,20 +46,16 @@ const Faculty_Register = () => {
     onSubmit: async (values) => {
       try {
         const resp = await createStudent(values);
-        if (resp.status === 200) {
-          setIsSuccess(true);
-          setIsFailure(false);
-        } else {
-        }
+        console.log(resp);
       } catch (error) {
-        setIsFailure(true);
+        console.log(error);
       }
     },
   });
   console.log(formik.values.firstName);
   console.log(formik.touched);
   return (
-    <div>
+    <div className="bg-slate-700">
       <div className="wrapper flex gap-0 md:gap-24  p-4 md:p-14 h-full w-full">
         <div className="lg:block hidden">
           <Image
@@ -169,12 +166,13 @@ const Faculty_Register = () => {
             </div>
             <div className="flex flex-col w-full">
               <select
-                id="departement_name"
-                name="departement_name"
+                id="department_name"
+                name="department_name"
                 className="p-3 outline-blue-500"
-                value={formik.values.departement_name}
+                value={formik.values.department_name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                defaultValue={"FME"}
               >
                 {options.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -182,9 +180,9 @@ const Faculty_Register = () => {
                   </option>
                 ))}
               </select>
-              {formik.touched.departement_name &&
-              formik.errors.departement_name ? (
-                <p className="text-red-600">{formik.errors.departement_name}</p>
+              {formik.touched.department_name &&
+              formik.errors.department_name ? (
+                <p className="text-red-600">{formik.errors.department_name}</p>
               ) : (
                 ""
               )}
@@ -199,7 +197,7 @@ const Faculty_Register = () => {
               <span className="md:text-xl">
                 Having account{" "}
                 <span
-                  onClick={() => router.push("/student/login")}
+                  onClick={() => router.push("/")}
                   className="text-blue-600 hover:text-blue-800 cursor-pointer"
                 >
                   login here
@@ -208,8 +206,21 @@ const Faculty_Register = () => {
             </div>
           </div>
         </form>{" "}
-        {isSuccess ? <h3>Account created </h3> : ""}
-        {isFailure ? <h3>Account not created</h3> : ""}
+        {isSuccess ? (
+          <h3 className="text-white absolute top-2 left-1/2">
+            Account created{" "}
+          </h3>
+        ) : (
+          ""
+        )}
+        {isFailure ? (
+          <h3 className="text-white absolute top-2 left-64">
+            Account not created (make sure that credentials ie email contact no,
+            reg no are not used before)
+          </h3>
+        ) : (
+          ""
+        )}
       </div>{" "}
     </div>
   );

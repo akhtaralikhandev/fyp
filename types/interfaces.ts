@@ -1,7 +1,8 @@
 export interface Student {
     name?: string | null | undefined
     reg_no: string
-    password?: string;
+    projectId: number
+    password?: string
     accessToken?: string
     role: string
     email?:string
@@ -10,6 +11,7 @@ export interface Employee {
     name?: string | null | undefined
     email?:string
     role: string
+    departement_name: string;
     password?: string;
     accessToken?: string
 }

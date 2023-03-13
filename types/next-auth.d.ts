@@ -1,6 +1,5 @@
 import NextAuth from "next-auth/next";
-import { Employee, Student } from "./interfaces";
-
+import {Student, Employee} from './interfaces'
 declare module "next-auth"{
   interface Session {
     student: Student,

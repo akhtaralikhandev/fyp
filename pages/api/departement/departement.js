@@ -4,35 +4,36 @@ const handler = async (req, res) => {
   if (req.method === "POST") {
     try {
       const { name, coordinator_email } = req.body;
-      const student = await prisma.department.create({
-        data: {
-          name: name,
-          coordinator_email: coordinator_email,
-        },
+      const departmentData = {
+        name,
+        ...(coordinator_email && { coordinator_email }), // Make coordinator_email optional
+      };
+      const department = await prisma.department.create({
+        data: departmentData,
       });
-      res.status(200).json(student);
+      res.status(200).json(department);
     } catch (error) {
       res.status(500).json(error.message);
       console.log(error.message);
     }
   } else if (req.method === "GET") {
     try {
-      const all_departements = await prisma.department.findMany();
-      return res.status(200).json(all_departements);
+      const all_departments = await prisma.department.findMany();
+      return res.status(200).json(all_departments);
     } catch (error) {
       res.status(500).json(error);
     }
   } else if (req.method === "DELETE") {
     const { name } = req.body;
     try {
-      const deleted_departement = await prisma.department.delete({
+      const deleted_department = await prisma.department.delete({
         where: {
           name: name,
         },
       });
-      if (!deleted_departement)
-        res.status(404).json("No departement found with that name");
-      res.status(200).json(deleted_departement);
+      if (!deleted_department)
+        res.status(404).json("No department found with that name");
+      res.status(200).json(deleted_department);
     } catch (error) {
       res.status(500).json(error);
     }
@@ -46,6 +47,7 @@ const handler = async (req, res) => {
       });
       res.status(200).json(updatedDepartment);
     } catch (error) {
+      console.log(error);
       res.status(500).json(error);
     }
   }

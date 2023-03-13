@@ -62,12 +62,17 @@ const Create_depart = () => {
                 id="name"
                 name="name"
                 className="p-3 outline-blue-500"
+                defaultValue={"FME"}
                 value={formik.values.name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               >
                 {options.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    defaultValue={"FME"}
+                    key={option.value}
+                    value={option.value}
+                  >
                     {option.label}
                   </option>
                 ))}

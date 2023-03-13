@@ -1,13 +1,13 @@
 import { mailOption, transporter } from "../../config/nodemailer";
 const Handler = async (req, res) => {
   if (req.method === "POST") {
-    const data = req.body;
     try {
       await transporter.sendMail({
         ...mailOption,
-        subject: data.subject,
-        text: `${req.body.firstName}`,
-        html: `<h1>${req.body.firstName}</h1> ${req.body.email} </p>`,
+        to: req.body.email,
+        subject: req.body.subject,
+        text: `${req.body.text}`,
+        html: `<h1>${req.body.text}</h1> ${req.body.text} </p>`,
       });
       return res.status(200).json({ success: true });
     } catch (error) {

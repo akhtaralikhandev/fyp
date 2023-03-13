@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,97 +7,151 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Student {
-  reg_no           Int         @unique
-  role             String      @default("student")
-  name             String
-  email            String      @unique
-  password         String
-  contact_no       String      @unique
-  departement_name String?
-  departement      Department? @relation(fields: [departement_name], references: [name])
-  projectId        Int?
-  project          Project?    @relation(fields: [projectId], references: [id])
-}
-
-// model User {
-//   id   Int     @id @default(autoincrement())
-//   name String?
-// }
-// Define a model for the departments in your university
-model Employee {
-  name             String
-  email            String                @unique
-  password         String
-  role             String                @default("employee")
-  contact_no       String                @unique
-  departements     Employee_Department[]
-  departement_name String?
-  projects         Employee_Project[]
-  role2            EmployeeRole?         @default(COORDINATOR)
+model SuperAdmin {
+  name     String
+  email    String @unique
+  password String @unique
 }
 
 model Department {
   id                Int                   @id @unique @default(autoincrement())
   name              String                @unique
-  coordinator_email String                @unique @default("abc@gmail.com")
+  coordinator_email String?               @unique
+  Coordinator       Employee?             @relation(fields: [coordinator_email], references: [email])
   projects          Project[]
-  Coordinator       Coordinator?
   employees         Employee_Department[]
   students          Student[]
+}
+
+model Employee {
+  name            String
+  email           String                @unique
+  password        String
+  contact_no      String                @unique
+  departments     Employee_Department[]
+  department_name String?
+  projects        Employee_Project[]
+  Rubrics         Rubrics[]
+  Coordinator     Department?
 }
 
 model Employee_Department {
   employee_email  String
   department_name String
   employee        Employee   @relation(fields: [employee_email], references: [email])
-  departement     Department @relation(fields: [department_name], references: [name])
+  department      Department @relation(fields: [department_name], references: [name])
 
   @@id([department_name, employee_email])
 }
 
+model Student {
+  reg_no                Int                           @unique
+  name                  String
+  email                 String                        @unique
+  password              String
+  contact_no            String                        @unique
+  department_name       String
+  department            Department                    @relation(fields: [department_name], references: [name])
+  projectId             Int?
+  project               Project?                      @relation(fields: [projectId], references: [id])
+  verification_token    String?                       @unique
+  isVerified            Boolean?
+  project_admin         Project[]                     @relation("admin_student")
+  ProjectJoiningRequest StudentProjectJoiningRequest?
+}
+
 model Project {
-  id              Int                @id @default(autoincrement())
-  title           String
-  description     String
-  status          ProjectStatus      @default(IN_PROGRESS)
-  department      Department         @relation(fields: [department_name], references: [name])
-  department_name String
-  students        Student[]
-  employee        Employee_Project[]
+  id                    Int                            @id @default(autoincrement())
+  title                 String
+  description           String
+  status                ProjectStatus                  @default(PENDING)
+  department            Department                     @relation(fields: [department_name], references: [name])
+  department_name       String
+  students              Student[]
+  employee              Employee_Project[]
+  attributes            Boolean                        @default(false)
+  SDG                   Boolean                        @default(false)
+  supervisor_accepted   Boolean                        @default(false)
+  coSupervisor_accepted Boolean                        @default(false)
+  admin_student_email   String?
+  admin_student         Student?                       @relation("admin_student", fields: [admin_student_email], references: [email])
+  student_request       StudentProjectJoiningRequest[]
+  panel_id              Int?                           @unique
+  Panel                 Panel?                         @relation(fields: [panel_id], references: [id])
+}
+
+model VerificationToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StudentProjectJoiningRequest {
+  id             Int     @unique @default(autoincrement())
+  projectId      Int
+  student_reg_no Int     @unique
+  status         String  @default("PENDING")
+  project        Project @relation(fields: [projectId], references: [id])
+  student        Student @relation(fields: [student_reg_no], references: [reg_no])
 }
 
 model Employee_Project {
+  id             Int           @unique @default(autoincrement())
   project_id     Int
-  project        Project  @relation(fields: [project_id], references: [id])
+  project        Project       @relation(fields: [project_id], references: [id])
   employee_email String
-  employee       Employee @relation(fields: [employee_email], references: [email])
+  employee       Employee      @relation(fields: [employee_email], references: [email])
+  role           EmployeeRole
+  status         RequestStatus @default(PENDING)
 
   @@id([project_id, employee_email])
 }
 
-// Define a model for the departments
-
-// Define a model for the students who will form project groups
-
-// Define a model for the projects that will be created by student groups
-
-// Define a model for the coordinator, who is a type of employee
-model Coordinator {
-  id           Int        @id @default(autoincrement())
-  department   Department @relation(fields: [departmentId], references: [id])
-  departmentId Int        @unique
+model Panel {
+  id                   Int                   @unique @default(autoincrement())
+  project              Project?
+  Presentation_Scedule Presentation_Scedule?
 }
 
-// Define an enum for the role of each employee (coordinator, advisor, or co-advisor)
+model Rubrics {
+  id                     Int                   @unique @default(autoincrement())
+  statement              String
+  marks                  Int
+  Presentation_Scedule   Presentation_Scedule? @relation(fields: [presentation_SceduleId], references: [id])
+  presentation_SceduleId Int?
+  evaluator              String
+  Evaluator              Employee              @relation(fields: [evaluator], references: [email])
+}
+
+model Presentation_Scedule {
+  id                  Int       @unique @default(autoincrement())
+  Presentation_number Int       @default(autoincrement())
+  date                DateTime
+  venue               String
+  Start_time          DateTime?
+  End_time            DateTime?
+  Rubrics             Rubrics[]
+  panelId             Int       @unique
+  Panel               Panel     @relation(fields: [panelId], references: [id])
+}
+
+enum ProjectStatus {
+  PENDING
+  Recommend_further_work
+  APPROVED
+  COMPLETED
+}
+
+enum RequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 enum EmployeeRole {
-  COORDINATOR
+  EVALUATOR
   ADVISOR
   CO_ADVISOR
-}
-
-// Define an enum for the status of each project
-enum ProjectStatus {
-  IN_PROGRESS
-  COMPLETED
 }

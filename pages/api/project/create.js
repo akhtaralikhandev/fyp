@@ -1,9 +1,21 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma, EmployeeRole } from "@prisma/client";
+
 const prisma = new PrismaClient();
 const handler = async (req, res) => {
   if (req.method === "POST") {
     try {
-      const { title, description, department_name, student_email } = req.body;
+      const {
+        title,
+        description,
+        department_name,
+        supervisor_email,
+        coSuperVisor_email,
+        student_email,
+        EmployeeRole,
+        SDG,
+        attributes,
+        status,
+      } = req.body;
       const student_check = await prisma.student.findUnique({
         where: { email: student_email },
       });
@@ -15,6 +27,9 @@ const handler = async (req, res) => {
             title: title,
             description: description,
             department_name: department_name,
+            SDG: SDG,
+            attributes: attributes,
+            admin_student_email: student_email,
           },
           include: {
             students: true,
@@ -29,7 +44,48 @@ const handler = async (req, res) => {
             projectId: project.id,
           },
         });
-        res.status(200).json(project);
+        if (supervisor_email && coSuperVisor_email) {
+          const supervisorProjectData = {
+            project_id: project.id,
+            employee_email: supervisor_email,
+            role: EmployeeRole.superVisor, // set the value of the role field
+            status: status,
+          };
+          const coSupervisorProjectData = {
+            project_id: project.id,
+            employee_email: supervisor_email,
+            role: EmployeeRole.coSuperVisor, // set the value of the role field
+            status: status,
+          };
+          const SupervisedProject = await prisma.employee_Project.createMany({
+            data: [supervisorProjectData, coSupervisorProjectData],
+          });
+          return res
+            .status(200)
+            .json({ supervisorProjectData, message: "Requested Successfully" });
+        } else if (supervisor_email) {
+          const supervisedProject = await prisma.employee_Project.create({
+            data: {
+              project_id: project.id,
+              employee_email: supervisor_email,
+              role: EmployeeRole.superVisor, // set the value of the role field
+              status: status,
+            },
+          });
+          return res.status(200).json(supervisedProject);
+        } else if (coSuperVisor_email) {
+          const superVisedProject = await prisma.employee_Project.create({
+            data: {
+              project_id: project.id,
+              employee_email: supervisor_email,
+              role: EmployeeRole.coSuperVisor, // set the value of the role field
+              status: status,
+            },
+          });
+          return res.status(200).json(superVisedProject);
+        }
+
+        res.status(200).json({ project: project, request: request });
       } else {
         return res.status(404).json("No student found with that email");
       }

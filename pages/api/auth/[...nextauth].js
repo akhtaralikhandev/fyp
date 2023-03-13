@@ -27,15 +27,26 @@ export const authOptions = {
         const employee = await prisma.employee.findUnique({
           where: { email: credentials.email },
         });
+        const superAdmin = await prisma.superAdmin.findUnique({
+          where: { email: credentials.email },
+        });
         if (student && student.password === credentials.password) {
           // Any object returned will be saved in `user` property of the JWT
-          return student;
+          return { ...student, role: "student" };
         } else if (employee && employee.password === credentials.password) {
-          return employee;
+          const department = await prisma.department.findFirst({
+            where: { coordinator_email: employee.email },
+          });
+          if (department) {
+            return { ...employee, role: "COORDINATOR" };
+          } else {
+            return { ...employee, role: "employee" };
+          }
+        } else if (superAdmin && superAdmin.password === credentials.password) {
+          return { ...superAdmin, role: "superAdmin" };
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           return null;
-
           // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
       },
@@ -49,13 +60,31 @@ export const authOptions = {
     secret: process.env.JWT_SECRET,
   },
   callbacks: {
-    async jwt({ token, student, employee }) {
+    async jwt({ token, user }) {
+      console.log("user called");
+      console.log(token);
+      if (user && user.reg_no) {
+        return {
+          ...token,
+          reg_no: user.reg_no,
+          projectId: user.projectId,
+          department_name: user.department_name,
+        };
+      } else if (user && user.role) {
+        return {
+          ...token,
+          role: user.role,
+          department_name: user.department_name,
+        };
+      }
+      // console.log("employeed called");
       // console.log(token);
-      return { ...token, ...(employee || student) };
+      return token;
     },
-    async session({ session, token, student }) {
+    async session({ session, token }) {
+      console.log("token called");
+      console.log(token);
       session.user = token;
-      console.log(session);
       return session;
     },
   },

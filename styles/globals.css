@@ -5,6 +5,20 @@
 .studentlist_tr:nth-child(even) {
   background-color: rgb(181, 194, 207);
 }
-.createOrJoinGroup {
+* {
+  padding: 0%;
+  margin: 0%;
+}
+
+.login_form {
+  height: 100vh;
+}
+/* .student_home {
+  height: 100vh;
+} */
+.add_form {
+  height: 100vh;
+}
+.div_home_table_student {
   height: 100vh;
 }

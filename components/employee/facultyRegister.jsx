@@ -16,21 +16,20 @@ const Faculty_Register = () => {
       email: "",
       password: "",
       contact_no: "",
-      role: "",
-      departement_name: "",
+
+      department_name: "",
     },
     validationSchema: Yup.object({
       name: Yup.string()
         .max(15, "must be 15 characters or less")
         .required("Required"),
-      email: Yup.string().max(10, "must be less than 10").required("Required"),
+      email: Yup.string().max(25, "must be less than 25").required("Required"),
       password: Yup.string()
         .max(15, "must be less than 15")
         .required("Required"),
       contact_no: Yup.string()
         .max(15, "must be 15 characters or less")
         .required("Required"),
-      role: Yup.string().notRequired(),
     }),
     onSubmit: async (values) => {
       console.log("clicked");
@@ -38,7 +37,7 @@ const Faculty_Register = () => {
     },
   });
   return (
-    <div>
+    <div className="bg-slate-700">
       <div className="wrapper flex gap-0 md:gap-24  p-4 md:p-14 h-full w-full">
         <div className="lg:block hidden">
           <Image
@@ -128,41 +127,30 @@ const Faculty_Register = () => {
                 )}
               </div>
             </div>
-            <div className="flex flex-col w-full">
-              <input
-                type="text"
-                id="role"
-                name="role"
-                className="p-3 outline-blue-500"
-                placeholder="role"
-                value={formik.values.role}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              {formik.touched.role && formik.errors.role ? (
-                <p className="text-red-600">{formik.errors.role}</p>
-              ) : (
-                ""
-              )}
-            </div>
+
             <div className="flex flex-col w-full">
               <select
-                id="departement_name"
-                name="departement_name"
+                id="department_name"
+                name="department_name"
+                defaultValue={"FME"}
                 className="p-3 outline-blue-500"
-                value={formik.values.departement_name}
+                value={formik.values.department_name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               >
                 {options.map((option) => (
-                  <option key={option.value} value={option.value}>
+                  <option
+                    defaultValue={"FME"}
+                    key={option.value}
+                    value={option.value}
+                  >
                     {option.label}
                   </option>
                 ))}
               </select>
-              {formik.touched.departement_name &&
-              formik.errors.departement_name ? (
-                <p className="text-red-600">{formik.errors.departement_name}</p>
+              {formik.touched.department_name &&
+              formik.errors.department_name ? (
+                <p className="text-red-600">{formik.errors.department_name}</p>
               ) : (
                 ""
               )}
@@ -177,7 +165,7 @@ const Faculty_Register = () => {
               <span className="md:text-xl">
                 Having account{" "}
                 <span
-                  onClick={() => router.push("/faculty/login")}
+                  onClick={() => router.push("/")}
                   className="text-blue-600 hover:text-blue-800 cursor-pointer"
                 >
                   login here
