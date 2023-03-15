@@ -3,18 +3,22 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const handler = async (req, res) => {
+  const { department } = req.query;
   if (req.method === "GET") {
     try {
-      const allEmployees = await prisma.employee.findMany({
+      const unassignedEmployees = await prisma.employee.findMany({
+        where: {
+          panelNumber: null,
+          department_name: department,
+        },
         include: {
           projects: true,
           Coordinator: true,
         },
       });
-      return res.status(200).json(allEmployees);
+      return res.status(200).json(unassignedEmployees);
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: "An error occurred." });
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 };

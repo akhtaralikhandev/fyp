@@ -1,26 +1,20 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 const handler = async (req, res) => {
-  if (req.method === "PUT") {
+  if (req.method === "POST") {
+    const { project_id, employee_email, role } = req.body;
     try {
-      const { projectId } = req.query;
-      const currentProject = await prisma.project.findUnique({
-        where: { id: parseInt(projectId) },
+      const employee_project = await prisma.employee_Project.create({
+        data: {
+          employee_email: employee_email,
+          project_id: project_id,
+          role: role,
+        },
       });
-      const { projectId: _, ...updatedValues } = req.body;
-      const updatedProject = {
-        ...currentProject,
-        id: parseInt(req.body.projectId),
-        ...updatedValues,
-      };
-      const project = await prisma.project.update({
-        where: { id: parseInt(projectId) },
-        data: updatedProject,
-      });
-      return res.status(200).json(project);
+      return res.status(200).json(employee_email);
     } catch (error) {
       console.log(error);
-      return res.status(500).json(error.message);
+      return res.status(500).json(error);
     }
   }
 };

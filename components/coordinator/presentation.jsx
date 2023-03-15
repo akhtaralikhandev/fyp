@@ -1,13 +1,15 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchEmployees } from "../../redux/features/presentations/presentationSlice";
-
+import { useSession } from "next-auth/react";
 const Presentation = () => {
+  const { data: session } = useSession();
   const allEmployees = useSelector((state) => state.presentation.employees);
+  const { department_name } = session.user;
   console.log(allEmployees);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(fetchEmployees());
+    dispatch(fetchEmployees(department_name));
   }, []);
   return (
     <div className="presentation">

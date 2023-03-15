@@ -31,8 +31,9 @@ model Employee {
   departments     Employee_Department[]
   department_name String?
   projects        Employee_Project[]
-  Rubrics         Rubrics[]
   Coordinator     Department?
+  Panel           Panel?                @relation(fields: [panelNumber], references: [id])
+  panelNumber     Int?
 }
 
 model Employee_Department {
@@ -61,23 +62,25 @@ model Student {
 }
 
 model Project {
-  id                    Int                            @id @default(autoincrement())
-  title                 String
-  description           String
-  status                ProjectStatus                  @default(PENDING)
-  department            Department                     @relation(fields: [department_name], references: [name])
-  department_name       String
-  students              Student[]
-  employee              Employee_Project[]
-  attributes            Boolean                        @default(false)
-  SDG                   Boolean                        @default(false)
-  supervisor_accepted   Boolean                        @default(false)
-  coSupervisor_accepted Boolean                        @default(false)
-  admin_student_email   String?
-  admin_student         Student?                       @relation("admin_student", fields: [admin_student_email], references: [email])
-  student_request       StudentProjectJoiningRequest[]
-  panel_id              Int?                           @unique
-  Panel                 Panel?                         @relation(fields: [panel_id], references: [id])
+  id                     Int                            @id @default(autoincrement())
+  title                  String
+  description            String
+  status                 ProjectStatus                  @default(PENDING)
+  department             Department                     @relation(fields: [department_name], references: [name])
+  department_name        String
+  students               Student[]
+  employee               Employee_Project[]
+  attributes             Boolean                        @default(false)
+  SDG                    Boolean                        @default(false)
+  supervisor_accepted    Boolean                        @default(false)
+  coSupervisor_accepted  Boolean                        @default(false)
+  admin_student_email    String?
+  admin_student          Student?                       @relation("admin_student", fields: [admin_student_email], references: [email])
+  student_request        StudentProjectJoiningRequest[]
+  panelNumber            Int?
+  Panel                  Panel?                         @relation(fields: [panelNumber], references: [id])
+  Presentation_Scedule   Presentation_Scedule?          @relation(fields: [presentation_SceduleId], references: [id])
+  presentation_SceduleId Int?
 }
 
 model VerificationToken {
@@ -110,9 +113,9 @@ model Employee_Project {
 }
 
 model Panel {
-  id                   Int                   @unique @default(autoincrement())
-  project              Project?
-  Presentation_Scedule Presentation_Scedule?
+  id        Int        @unique @default(autoincrement())
+  projects  Project[]
+  Employees Employee[]
 }
 
 model Rubrics {
@@ -122,7 +125,6 @@ model Rubrics {
   Presentation_Scedule   Presentation_Scedule? @relation(fields: [presentation_SceduleId], references: [id])
   presentation_SceduleId Int?
   evaluator              String
-  Evaluator              Employee              @relation(fields: [evaluator], references: [email])
 }
 
 model Presentation_Scedule {
@@ -133,8 +135,7 @@ model Presentation_Scedule {
   Start_time          DateTime?
   End_time            DateTime?
   Rubrics             Rubrics[]
-  panelId             Int       @unique
-  Panel               Panel     @relation(fields: [panelId], references: [id])
+  projects            Project[]
 }
 
 enum ProjectStatus {

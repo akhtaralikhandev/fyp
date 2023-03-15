@@ -9,19 +9,13 @@ const EditPage = ({ sdgList, attributes, options }) => {
   console.log(data);
   const [title, setTitle] = useState(data?.title);
   const [description, setDescription] = useState(data?.description);
-  const [supervisor_email, setSupervisor_email] = useState(
-    data?.supervisor_email
-  );
-  const [coSuperVisor_email, setCoSupervisor_email] = useState(
-    data?.coSuperVisor_email
-  );
+
   const [department_name, setDepartment_name] = useState(data?.department_name);
   const dispatch = useDispatch();
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (description && title) {
       const data = {
-        supervisor_email: supervisor_email,
         projectId: projectId,
         title: title,
         description: description,
@@ -45,18 +39,6 @@ const EditPage = ({ sdgList, attributes, options }) => {
           className=" border-2 p-2 resize-none  outline-blue-600 rounded-xl"
           cols={10}
           rows={10}
-        />
-        <input
-          value={supervisor_email}
-          onChange={(e) => setSupervisor_email(e.target.value)}
-          placeholder="Supervisor email"
-          className=" border-2 p-2 w-96 outline-blue-600 rounded-xl"
-        />
-        <input
-          value={coSuperVisor_email}
-          onChange={(e) => setCoSupervisor_email(e.target.value)}
-          placeholder="Co-Supervisor email"
-          className=" border-2 p-2 w-96 outline-blue-600 rounded-xl"
         />
         <select
           id="department_name"

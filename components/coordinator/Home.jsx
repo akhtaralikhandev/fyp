@@ -5,6 +5,7 @@ import AllProjects from "./allProjectsList2";
 import SuperVisedProjectsRequests from "./superVisedRequest";
 import SuperVisedProject from "./superProject";
 import Presentation from "./presentation";
+import Panel from "./panel";
 
 const Home = () => {
   const { render } = useContext(NavbarContext);
@@ -20,6 +21,7 @@ const Home = () => {
         )}
         {render === "Supervised projects" ? <SuperVisedProject /> : ""}
         {render === "Presentations" ? <Presentation /> : ""}
+        {render === "Panels" ? <Panel /> : ""}
       </div>
     </div>
   );

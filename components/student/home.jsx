@@ -14,17 +14,43 @@ import JoinRequest from "./joinRequests";
 import EditPage from "./editPage";
 import { options, sdgList, attributes } from "./createOrJoin";
 import { fetchProject } from "../../redux/features/project/projectSlice";
+import { AddSupervisor } from "../../redux/features/coordinator/coordinator_slice";
+import { EmployeeRole } from "@prisma/client";
 const Student_home = () => {
   const { data: session } = useSession();
+  const { projectId, reg_no } = session.user;
+
   const { render } = useContext(NavbarContext);
   const dispatch = useDispatch();
   console.log(render);
   const students_of_group = useSelector((state) => state.coordinator.students);
+  const [employee_email, setEmployee_email] = useState("");
+  console.log("coordinator");
+  const projects = useSelector((state) => state.coordinator.projects.projects);
+  console.log(projects);
   const data = useSelector((state) => state.project.project);
+  function findProjectByRegNo(projects, regNo) {
+    return (
+      projects.find((project) =>
+        project.students.some((student) => student.reg_no === regNo)
+      ) || null
+    );
+  }
+  function findSuperVisor(projects) {
+    return (
+      projects.find((project) =>
+        project.employee.some((student) => student.role === "ADVISOR")
+      ) || null
+    );
+  }
+  const myProject = findProjectByRegNo(projects, reg_no);
+  console.log("super visor ");
+  const supervisor = findProjectByRegNo(projects);
+  console.log(supervisor);
+  console.log(myProject);
   console.log(data);
   console.log(students_of_group);
 
-  const { projectId, reg_no } = session.user;
   const data2 = {
     projectId: projectId,
     reg_no: reg_no,
@@ -33,6 +59,17 @@ const Student_home = () => {
     dispatch(fetchProject(projectId));
   }, []);
   console.log(projectId);
+  const handleAddingSupervisor = (e) => {
+    e.preventDefault();
+    if (employee_email) {
+      const data3 = {
+        employee_email,
+        projectId,
+        role: EmployeeRole.ADVISOR,
+      };
+      dispatch(AddSupervisor(data3));
+    }
+  };
   return (
     <div>
       <div className="navbar">
@@ -49,7 +86,7 @@ const Student_home = () => {
                       Title :{" "}
                     </span>
                     <span className="text-xl flex   items-start flex-1">
-                      {data?.title}
+                      {myProject?.title}
                     </span>
                   </div>
 
@@ -58,7 +95,7 @@ const Student_home = () => {
                       Coordinator Approval
                     </span>
                     <span className="flex-1 items-start flex justify-start">
-                      {data?.status}
+                      {myProject?.status}
                     </span>
                   </div>
                   <div className="flex gap-24 items-center">
@@ -66,7 +103,7 @@ const Student_home = () => {
                       Admin Student
                     </span>
                     <span className="flex-1 items-start flex">
-                      {data?.admin_student_email}
+                      {myProject?.admin_student_email}
                     </span>
                   </div>
                   <div className="flex gap-24 items-center">
@@ -74,13 +111,18 @@ const Student_home = () => {
                       Co Supervisor email
                     </span>{" "}
                     <span className="flex-1">
-                      {data?.coSuperVisor_email === null ? (
+                      {supervisor === null ? (
                         <div className="flex">
                           <input
-                            className="p-2  rounded-lg outline-blue-400"
-                            placeholder="add Co-Supervisor email"
+                            className="p-2  rounded-lg text-black outline-blue-400"
+                            placeholder="add Supervisor Email"
+                            value={employee_email}
+                            onChange={(e) => setEmployee_email(e.target.value)}
                           />
-                          <button className="bg-slate-600 p-2 text-blue-200 rounded-lg">
+                          <button
+                            onClick={(e) => handleAddingSupervisor(e)}
+                            className="bg-slate-600 p-2 text-blue-200 rounded-lg"
+                          >
                             submit
                           </button>
                         </div>

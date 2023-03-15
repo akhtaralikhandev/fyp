@@ -123,7 +123,14 @@ export const handleEditingStudent = createAsyncThunk(
     }
   }
 );
-
+export const AddSupervisor = createAsyncThunk("addSupervisor", async (data) => {
+  const resp = await axios.post(
+    "http://localhost:3000/api/employee_project/supervisor",
+    data
+  );
+  console.log(resp.data);
+  return resp.data;
+});
 const coordinatorSlice = createSlice({
   name: "coordinator",
   initialState,

@@ -41,6 +41,12 @@ const Navbar = () => {
         >
           Presentations
         </li>
+        <li
+          onClick={() => setRender("Panels")}
+          className=" cursor-pointer hover:text-gray-300 "
+        >
+          Panels
+        </li>
       </ul>
       <div className="flex flex-col gap-2">
         <button

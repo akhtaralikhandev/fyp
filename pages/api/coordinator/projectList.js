@@ -23,9 +23,13 @@ const handler = async (req, res) => {
         include: {
           students: true,
           employees: true,
+
           projects: {
             include: {
               employee: true,
+              Panel: true,
+              Presentation_Scedule: true,
+              students: true,
             },
           },
         },
