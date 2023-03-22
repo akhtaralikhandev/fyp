@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import StudentList from "./groupStudentList";
-
 import axios from "axios";
 import AddForm from "./addForm";
 import { useContext } from "react";
@@ -14,8 +13,13 @@ import JoinRequest from "./joinRequests";
 import EditPage from "./editPage";
 import { options, sdgList, attributes } from "./createOrJoin";
 import { fetchProject } from "../../redux/features/project/projectSlice";
-import { AddSupervisor } from "../../redux/features/coordinator/coordinator_slice";
+import {
+  AddSupervisor,
+  fetch_students_of_group,
+} from "../../redux/features/coordinator/coordinator_slice";
 import { EmployeeRole } from "@prisma/client";
+import { fetProject } from "../../redux/features/student/studentSlice";
+
 const Student_home = () => {
   const { data: session } = useSession();
   const { projectId, reg_no } = session.user;
@@ -47,6 +51,7 @@ const Student_home = () => {
   console.log("super visor ");
   const supervisor = findProjectByRegNo(projects);
   console.log(supervisor);
+  console.log("this is my project ok done ");
   console.log(myProject);
   console.log(data);
   console.log(students_of_group);
@@ -70,6 +75,15 @@ const Student_home = () => {
       dispatch(AddSupervisor(data3));
     }
   };
+  console.log("use effect with fet ");
+  useEffect(() => {
+    console.log("fet projects is called ");
+    dispatch(fetProject());
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetch_students_of_group(projectId));
+  }, []);
   return (
     <div>
       <div className="navbar">
@@ -161,7 +175,7 @@ const Student_home = () => {
                       ) : (
                         <div>
                           <span className="flex-1 items-center flex justify-center">
-                            {data?.supervisor_email}
+                            {myProject?.employee[0].employee_email}
                           </span>
                           <span>
                             {data?.supervisor_accepted ? (

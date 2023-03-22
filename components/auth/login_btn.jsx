@@ -7,6 +7,7 @@ import Employee_home from "../employee/home";
 import { loginUser } from "../../redux/features/user/userSlice";
 import Home2 from "../../pages/superAdmin/home";
 import Coordinator_home from "../../pages/coordinator/Home";
+import { HavingProject } from "../../redux/features/student/studentSlice";
 
 export default function Component() {
   const [email, setEmail] = useState("");
@@ -20,6 +21,11 @@ export default function Component() {
   const { data: session } = useSession();
   console.log(session);
   if (session?.user?.reg_no) {
+    if (session?.user?.projectId !== null) {
+      dispatch(HavingProject(true));
+    } else {
+      dispatch(HavingProject(false));
+    }
     dispatch(loginUser(session));
     return (
       <>

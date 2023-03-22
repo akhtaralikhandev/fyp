@@ -21,7 +21,12 @@ const Group_page = () => {
   // const { projectId } = session?.user;
   return (
     <StudentGroupContext.Provider
-      value={{ studentList, setStudentList, editRegNo, setEditRegNo }}
+      value={{
+        studentList,
+        setStudentList,
+        editRegNo,
+        setEditRegNo,
+      }}
     >
       <div className="group_page">
         <div className="group_page_wrapper flex gap-4 relative">

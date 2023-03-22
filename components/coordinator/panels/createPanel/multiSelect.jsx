@@ -51,7 +51,10 @@ function MultiSelect({ options, value, onChange, project }) {
         {project ? <span> Add Projects</span> : <span>Add Employees</span>}
       </button>
       {isOpen && (
-        <ul className="dropdown-menu bg-slate-700" style={{ display: "block" }}>
+        <ul
+          className="dropdown-menu rounded-lg bg-slate-700"
+          style={{ display: "block" }}
+        >
           {options.map((option) => {
             if (option.title) {
               return (

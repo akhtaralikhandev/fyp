@@ -3,11 +3,14 @@ import { useSession } from "next-auth/react";
 import Student_home from "../../components/student/home";
 import { NavbarContext } from "../../components/student/navbarContext";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 const CreateGroup = () => {
   const [render, setRender] = useState("Project Detail");
   const { data: session } = useSession();
+  const havingProject = useSelector((state) => state.student.havingProject);
+  console.log(havingProject);
   console.log(session);
-  if (session?.user?.projectId) {
+  if (havingProject) {
     return (
       <NavbarContext.Provider value={{ render, setRender }}>
         {" "}

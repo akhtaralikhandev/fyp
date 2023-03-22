@@ -1,9 +1,12 @@
-import { signOut } from "next-auth/react";
-import { useContext } from "react";
+import { signOut, getSession } from "next-auth/react";
+import { useContext, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { NavbarContext } from "./navbarContext";
 import { useSession } from "next-auth/react";
-import { leaveGroup } from "../../redux/features/student/studentSlice";
+import {
+  HavingProject,
+  leaveGroup,
+} from "../../redux/features/student/studentSlice";
 const Navbar = () => {
   const { setRender } = useContext(NavbarContext);
   const dispatch = useDispatch();
@@ -13,6 +16,7 @@ const Navbar = () => {
   console.log(setRender);
   const handleLeaveGroup = () => {
     dispatch(leaveGroup(reg_no));
+    dispatch(HavingProject(false));
   };
   return (
     <div className="navbar bg-slate-700 justify-between text-white items-center flex p-8  text-xl">

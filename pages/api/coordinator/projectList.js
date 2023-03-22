@@ -15,15 +15,17 @@ const handler = async (req, res) => {
       return res.status(500).json(error);
     }
   } else if (req.method === "GET") {
-    const { coordinator_email } = req.query;
+    const { department_name } = req.query;
     try {
-      console.log(coordinator_email);
+      console.log(department_name);
       const department = await prisma.department.findFirst({
-        where: { coordinator_email: coordinator_email },
+        where: { name: department_name },
         include: {
-          students: true,
+          students: {
+            include: { ProjectJoiningRequest: true },
+          },
           employees: true,
-
+          employee: true,
           projects: {
             include: {
               employee: true,

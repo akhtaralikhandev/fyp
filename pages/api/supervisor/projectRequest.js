@@ -1,20 +1,21 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma, RequestStatus } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const handler = async (req, res) => {
   const { status, id, employee_email, project_id } = req.body;
-
-  try {
-    if (req.method === "PUT") {
+  if (req.method === "PUT")
+    try {
+      console.log("this is called from put method");
       console.log(req.body);
       const employee = await prisma.employee_Project.findFirst({
         where: { id: parseInt(id) },
       });
       if (employee.role === "ADVISOR" && status === "ACCEPTED") {
+        console.log("this is also called");
         const updatedEmployee = await prisma.employee_Project.update({
           where: { id: parseInt(id) },
           data: {
-            status: status,
+            status: RequestStatus.ACCEPTED,
           },
         });
         const updatedProject = await prisma.project.update({
@@ -38,10 +39,9 @@ const handler = async (req, res) => {
         });
         return res.status(200).json(updatedEmployee, updatedProject);
       }
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
-  }
 };
 export default handler;

@@ -3,17 +3,29 @@ import axios from "axios";
 
 const initialState = {
   joinRequest: [],
+  student: [],
+  projects: [],
+  havingProject: true,
+  projectId: "",
 };
-export const fetchRequests = createAsyncThunk("fetchRequest", async (data) => {
-  const resp = await axios.get(
-    `http://localhost:3000/api/project/joinRequest?projectId=${data.projectId}`,
-    {
-      reg_no: data.reg_no,
-      projectId: data.projectId,
-    }
-  );
+export const fetchStudents = createAsyncThunk(
+  "fetchStudents",
+  async (reg_no) => {
+    const resp = await axios.get(
+      `http://localhost:3000/api/student/student?reg_no=${reg_no}`,
+      {
+        reg_no: reg_no,
+      }
+    );
+    console.log(resp);
+    //   console.log(departement_name);
+    return resp.data;
+  }
+);
+export const fetProject = createAsyncThunk("fetchProject2", async () => {
+  const resp = await axios.get("http://localhost:3000/api/project/id?id=9");
+  console.log("fetc project called from student slice");
   console.log(resp);
-  //   console.log(departement_name);
   return resp.data;
 });
 export const joinRequests = createAsyncThunk("joinRequest", async (data) => {
@@ -33,19 +45,44 @@ export const leaveGroup = createAsyncThunk("joinRequest", async (reg_no) => {
     reg_no: reg_no,
   });
   console.log(resp);
-  //   console.log(departement_name);
+  // update session if the request was successful
+
   return resp.data;
 });
 
+export const fetchJoinRequests = createAsyncThunk(
+  "fetchJoinRequests",
+  async (projectId) => {
+    const resp = await axios.get(
+      `http://localhost:3000/api/project/joinRequest?projectId=${projectId}`
+    );
+    console.log("fetchJoin Requests slice ");
+    return resp.data;
+  }
+);
 const studentSlice = createSlice({
   name: "student",
   initialState,
-  reducers: {},
+  reducers: {
+    HavingProject: (state, action) => {
+      state.havingProject = action.payload;
+    },
+    setProjectId: (state, action) => {
+      state.projectId = action.payload;
+    },
+  },
   extraReducers(builder) {
-    builder.addCase(fetchRequests.fulfilled, (state, action) => {
-      state.joinRequest = action.payload;
-    });
+    builder
+      .addCase(fetchStudents.fulfilled, (state, action) => {
+        state.student = action.payload;
+      })
+      .addCase(fetProject.fulfilled, (state, action) => {
+        state.projects = action.payload;
+      })
+      .addCase(fetchJoinRequests.fulfilled, (state, action) => {
+        state.joinRequest = action.payload;
+      });
   },
 });
-
+export const { HavingProject, setProjectId } = studentSlice.actions;
 export default studentSlice.reducer;

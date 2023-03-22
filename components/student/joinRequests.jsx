@@ -1,25 +1,37 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchRequests } from "../../redux/features/student/studentSlice";
+import { useSession } from "next-auth/react";
+import {
+  fetchJoinRequests,
+  fetchRequests,
+} from "../../redux/features/student/studentSlice";
 import { handleAddingStudent2 } from "../../redux/features/coordinator/coordinator_slice";
+import axios from "axios";
 const JoinRequest = ({ data }) => {
+  const { data: session } = useSession();
+  const { projectId, reg_no } = session.user;
+
   const joinRequests = useSelector(
     (state) => state.student.joinRequest[0]?.student
   );
-  const projectId = useSelector(
-    (state) => state.student.joinRequest[0]?.projectId
-  );
+  const id = useSelector((state) => state.student?.joinRequest[0]?.id);
+  console.log("id from join requests");
+  console.log(id);
+  console.log("join requests");
+  console.log(joinRequests);
+  console.log("project id from join requests ");
   console.log(projectId);
   const [studentList, setStudentList] = useState([joinRequests]);
+  console.log("student list is here ");
   console.log(studentList);
   console.log(joinRequests);
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log("useEffect called");
-    dispatch(fetchRequests(data));
+    dispatch(fetchJoinRequests(projectId));
   }, []);
   const handleApproval = (reg_no) => {
     const data = {
+      id: id,
       reg_no: reg_no,
       projectId: projectId,
     };
@@ -28,9 +40,9 @@ const JoinRequest = ({ data }) => {
   return (
     <div className="join_request bg-slate-700">
       <div className="join_request_wrapper">
-        {projectId !== undefined ? <span>join request here</span> : ""}
+        {studentList !== undefined ? <span>join request here</span> : ""}
       </div>
-      {projectId !== undefined ? (
+      {studentList !== undefined ? (
         <table className="table mt-8 bg-slate-200    border-collapse border-slate-500 w-full ">
           <tbody>
             <tr className="bg-slate-600  border-blue-500 text-3xl text-white">
@@ -43,7 +55,7 @@ const JoinRequest = ({ data }) => {
               </th>
             </tr>
 
-            {studentList.map((x) => (
+            {studentList?.map((x) => (
               <tr className="studentlist_tr text-black">
                 <td className="border  cursor-pointer text-center p-2">
                   {x?.reg_no}

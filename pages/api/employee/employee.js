@@ -4,6 +4,11 @@ const handler = async (req, res) => {
   if (req.method === "POST") {
     try {
       const { name, password, email, contact_no, department_name } = req.body;
+      const alreadEmployee = await prisma.employee.findFirst({
+        where: { email: email },
+      });
+      if (alreadEmployee)
+        return res.status(403).json({ message: "Email already in use" });
       const employee = await prisma.employee.create({
         data: {
           name: name,

@@ -3,22 +3,16 @@ const prisma = new PrismaClient();
 const handler = async (req, res) => {
   if (req.method === "GET") {
     try {
-      const { id } = req.query;
-      const project = await prisma.project.findUnique({
-        where: { id: parseInt(id) },
+      const { reg_no } = req.query;
+      const student = await prisma.student.findUnique({
+        where: { reg_no: parseInt(reg_no) },
         include: {
-          student_request: true,
-          Presentation_Scedule: true,
+          ProjectJoiningRequest: true,
+          project: true,
+          project_admin: true,
         },
       });
-      if (project) {
-        const students_of_project = await prisma.student.findMany({
-          where: { projectId: parseInt(id) },
-        });
-        return res
-          .status(200)
-          .json({ project: project, students_of_project: students_of_project });
-      }
+      return res.status(200).json(student);
     } catch (error) {
       console.log(error);
       res.status(500).json(error.message);

@@ -64,7 +64,9 @@ const CreateOrJoinGroup = () => {
     (state) => state.user.user.department_name
   );
   console.log(department_name2);
-  const projects = useSelector((state) => state.coordinator.projects);
+  const projects = useSelector((state) => state.coordinator.projects.projects);
+  console.log("projects");
+  console.log(projects);
   const students_of_group = useSelector((state) => state.coordinator.students);
   console.log(students_of_group);
   const dispatch = useDispatch();

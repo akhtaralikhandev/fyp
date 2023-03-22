@@ -1,14 +1,18 @@
 import Navbar from "./navbar";
 import { NavbarContext } from "./navbarContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import AllProjects from "./allProjectsList2";
 import SuperVisedProjectsRequests from "./superVisedRequest";
 import SuperVisedProject from "./superProject";
 import Presentation from "./presentation";
 import Panel from "./panel";
+import PresentationList from "./presentation/presentationList";
 
 const Home = () => {
-  const { render } = useContext(NavbarContext);
+  const { render, setRender } = useContext(NavbarContext);
+  useEffect(() => {
+    setRender("All Projects");
+  }, []);
   return (
     <div className="coordinator_home_comp">
       <div className="coordinator_home_comp">
@@ -20,7 +24,7 @@ const Home = () => {
           ""
         )}
         {render === "Supervised projects" ? <SuperVisedProject /> : ""}
-        {render === "Presentations" ? <Presentation /> : ""}
+        {render === "Presentations" ? <PresentationList /> : ""}
         {render === "Panels" ? <Panel /> : ""}
       </div>
     </div>

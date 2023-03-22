@@ -21,6 +21,7 @@ model Department {
   projects          Project[]
   employees         Employee_Department[]
   students          Student[]
+  employee          Employee[]            @relation("emp_depart")
 }
 
 model Employee {
@@ -30,6 +31,7 @@ model Employee {
   contact_no      String                @unique
   departments     Employee_Department[]
   department_name String?
+  department      Department?           @relation("emp_depart", fields: [department_name], references: [name])
   projects        Employee_Project[]
   Coordinator     Department?
   Panel           Panel?                @relation(fields: [panelNumber], references: [id])
@@ -46,19 +48,19 @@ model Employee_Department {
 }
 
 model Student {
-  reg_no                Int                           @unique
+  reg_no                Int                            @unique
   name                  String
-  email                 String                        @unique
+  email                 String                         @unique
   password              String
-  contact_no            String                        @unique
+  contact_no            String                         @unique
   department_name       String
-  department            Department                    @relation(fields: [department_name], references: [name])
+  department            Department                     @relation(fields: [department_name], references: [name])
   projectId             Int?
-  project               Project?                      @relation(fields: [projectId], references: [id])
-  verification_token    String?                       @unique
+  project               Project?                       @relation(fields: [projectId], references: [id])
+  verification_token    String?                        @unique
   isVerified            Boolean?
-  project_admin         Project[]                     @relation("admin_student")
-  ProjectJoiningRequest StudentProjectJoiningRequest?
+  project_admin         Project[]                      @relation("admin_student")
+  ProjectJoiningRequest StudentProjectJoiningRequest[]
 }
 
 model Project {
@@ -94,7 +96,7 @@ model VerificationToken {
 model StudentProjectJoiningRequest {
   id             Int     @unique @default(autoincrement())
   projectId      Int
-  student_reg_no Int     @unique
+  student_reg_no Int
   status         String  @default("PENDING")
   project        Project @relation(fields: [projectId], references: [id])
   student        Student @relation(fields: [student_reg_no], references: [reg_no])
@@ -135,7 +137,9 @@ model Presentation_Scedule {
   Start_time          DateTime?
   End_time            DateTime?
   Rubrics             Rubrics[]
-  projects            Project[]
+
+  projects Project[]
+  status   PresentationStatus @default(PENDING)
 }
 
 enum ProjectStatus {
@@ -155,4 +159,10 @@ enum EmployeeRole {
   EVALUATOR
   ADVISOR
   CO_ADVISOR
+}
+
+enum PresentationStatus {
+  PENDING
+  STARTED
+  COMPLETED
 }

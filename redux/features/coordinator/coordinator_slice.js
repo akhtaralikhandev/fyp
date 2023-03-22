@@ -19,12 +19,12 @@ export const AcceptOrRejectSupervisingRequest = createAsyncThunk(
 );
 export const fetchProjects = createAsyncThunk(
   "fetchProjects",
-  async (coordinator_email) => {
+  async (department_name) => {
     const resp = await axios.get(
-      `http://localhost:3000/api/coordinator/projectList?coordinator_email=${coordinator_email}`
+      `http://localhost:3000/api/coordinator/projectList?department_name=${department_name}`
     );
     console.log(resp);
-    console.log(coordinator_email);
+    console.log(department_name);
     console.log("this is called ");
     return resp.data;
   }
@@ -93,7 +93,7 @@ export const handleAddingStudent2 = createAsyncThunk(
   async (data) => {
     try {
       const resp = await axios.put(
-        `http://localhost:3000/api/project/joinRequest?reg_no=${data.reg_no}&projectId=${data.projectId}`,
+        `http://localhost:3000/api/project/joinRequest?reg_no=${data.reg_no}&projectId=${data.projectId}&id=${data.id}`,
         {
           projectId: data.projectId,
         }
@@ -131,6 +131,17 @@ export const AddSupervisor = createAsyncThunk("addSupervisor", async (data) => {
   console.log(resp.data);
   return resp.data;
 });
+export const AddCoSupervisor = createAsyncThunk(
+  "AddCoSupervisor",
+  async (data) => {
+    const resp = await axios.post(
+      "http://localhost:3000/api/employee_project/cosupervisor",
+      data
+    );
+    console.log(resp.data);
+    return resp.data;
+  }
+);
 const coordinatorSlice = createSlice({
   name: "coordinator",
   initialState,
@@ -144,6 +155,7 @@ const coordinatorSlice = createSlice({
         (x) => x.reg_no !== action.payload
       );
     },
+
     updateProjectStatus: (state, action) => {
       const { projectId, status } = action.payload;
       const projectIndex = state.projects.findIndex(
@@ -157,9 +169,12 @@ const coordinatorSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchProjects.fulfilled, (state, action) => {
+        console.log("fetchprojects called");
+        console.log(action.payload);
         state.projects = action.payload;
       })
       .addCase(fetch_students_of_group.fulfilled, (state, action) => {
+        console.log("slice called");
         console.log(action.payload);
         state.students = action.payload;
       })

@@ -30,12 +30,6 @@ const Navbar = () => {
           Supervised projects
         </li>
         <li
-          onClick={() => setRender("Project Supervising Requests")}
-          className=" cursor-pointer hover:text-gray-300 "
-        >
-          Project Supervising Requests
-        </li>
-        <li
           onClick={() => setRender("Presentations")}
           className=" cursor-pointer hover:text-gray-300 "
         >

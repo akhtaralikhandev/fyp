@@ -10,12 +10,12 @@ const AllProjects = () => {
   const { data: session } = useSession();
   const projects = useSelector((state) => state.coordinator.projects.projects);
   console.log(projects);
-  const { email } = session.user;
+  const { email, department_name } = session.user;
   const dispatch = useDispatch();
   console.log(email);
   useEffect(() => {
     console.log("callled");
-    dispatch(fetchProjects(email));
+    dispatch(fetchProjects(department_name));
   }, []);
   return (
     <div>
