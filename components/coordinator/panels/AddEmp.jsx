@@ -18,6 +18,7 @@ const EmployeeList = ({ employees, id }) => {
   const handleEmployeeSelect = (e) => {
     const selectedEmail = e.target.value;
     setAddEmpEmail(selectedEmail);
+    console.log(selectedEmail);
   };
 
   return (

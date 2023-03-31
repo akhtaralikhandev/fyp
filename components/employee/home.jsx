@@ -1,32 +1,38 @@
-import { signOut } from "next-auth/react";
+import Navbar from "./navbar";
+import { useContext, useEffect } from "react";
+import { NavbarContext } from "../coordinator/navbarContext";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchEmployee,
+  setRender,
+} from "../../redux/features/employee/employeeSlice";
+import Project from "./projects/project";
+import AllProjects from "./projects/allProjectList";
+import Panel from "./panel/panel";
 import { useSession } from "next-auth/react";
-import { signOut2 } from "../../redux/app/store";
-import { persistor } from "../../redux/app/store";
-import { useDispatch } from "react-redux";
-const Employee_home = () => {
+import Presentation from "./presentation/presentation";
+
+const Home = () => {
   const dispatch = useDispatch();
-  const { data: session, status } = useSession();
-  if (!session) {
-    return <>loading</>;
-  }
-  if (typeof session === "undefined") {
-    return <div>session data not loaded</div>;
-  }
-  console.log(session);
+  const render = useSelector((state) => state.employee.render);
+  const { data: session } = useSession();
+  const { email } = session?.user;
+  console.log(render);
+  useEffect(() => {
+    dispatch(setRender("All Projects"));
+  }, []);
+  useEffect(() => {
+    dispatch(fetchEmployee(email));
+  }, []);
   return (
-    <div className="home">
-      <div className="home_wrapper">employee home</div>
-      <button
-        onClick={() => {
-          dispatch(signOut2());
-          signOut();
-          persistor.purge();
-        }}
-      >
-        sign out
-      </button>
+    <div className="coordinator_home_comp">
+      <div className="coordinator_home_comp">
+        <Navbar />
+        {render === "All Projects" && <AllProjects />}
+        {render === "panel" && <Panel />}
+        {render === "Presentations" && <Presentation />}
+      </div>
     </div>
   );
 };
-
-export default Employee_home;
+export default Home;

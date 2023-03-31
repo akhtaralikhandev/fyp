@@ -1,7 +1,15 @@
 import { useContext, useState } from "react";
 import { StudentGroupContext } from "../../context/StudentGroup";
+import RemoveConfirmation from "./confirm/removeConfirm";
 
-const StudentList = ({ onDelete, student, onSubmit, onEdit }) => {
+const StudentList = ({
+  onDelete,
+  student,
+  reg_no,
+  projectId,
+  onSubmit,
+  onEdit,
+}) => {
   const { editRegNo, setEditRegNo } = useContext(StudentGroupContext);
   return (
     <tr className="studentlist_tr text-black">
@@ -16,21 +24,7 @@ const StudentList = ({ onDelete, student, onSubmit, onEdit }) => {
         {student.email}
       </td>
       <td className="border flex gap-4 items-center justify-center cursor-pointer text-center p-2">
-        <span
-          onClick={() => onDelete(student.reg_no)}
-          className="bg-slate-700 p-2 rounded-xl hover:bg-slate-500 text-white"
-        >
-          Delete
-        </span>
-        <span
-          onClick={() => {
-            setEditRegNo(student.reg_no);
-            onEdit(student.reg_no);
-          }}
-          className="bg-slate-700 p-2 rounded-xl hover:bg-slate-500 text-white"
-        >
-          Edit
-        </span>
+        <RemoveConfirmation reg_no={reg_no} projectId={projectId} />
       </td>
     </tr>
   );

@@ -78,8 +78,10 @@ const CreatePanel = () => {
       <div className="createPanelWrapper">
         {PanelCreationError && (
           <div>
-            <span>these employees are already part of panels</span>
-            {PanelCreationError?.assignedEmails.map((x) => (
+            <span className="text-red-500 ">
+              these employees are already part of panels
+            </span>
+            {PanelCreationError?.assignedEmails?.map((x) => (
               <div>
                 <span>{x}</span>
               </div>

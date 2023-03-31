@@ -8,6 +8,7 @@ import { loginUser } from "../../redux/features/user/userSlice";
 import Home2 from "../../pages/superAdmin/home";
 import Coordinator_home from "../../pages/coordinator/Home";
 import { HavingProject } from "../../redux/features/student/studentSlice";
+import Home from "../employee/home";
 
 export default function Component() {
   const [email, setEmail] = useState("");
@@ -36,8 +37,7 @@ export default function Component() {
     dispatch(loginUser(session));
     return (
       <>
-        <span>employee page</span>
-        <button onClick={() => signOut()}>sign out</button>
+        <Home />
       </>
     );
   } else if (session?.user?.role === "COORDINATOR") {

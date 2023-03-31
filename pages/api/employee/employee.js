@@ -48,6 +48,48 @@ const handler = async (req, res) => {
     } catch (error) {
       res.status(500).json(error);
     }
+  } else if (req.method === "GET") {
+    const { email } = req.query;
+    try {
+      const Employees = await prisma.employee.findUnique({
+        where: { email: email },
+        include: {
+          department: {
+            include: {
+              projects: true,
+              employees: true,
+              employee: true,
+            },
+          },
+          departments: true,
+          Panel: {
+            include: {
+              projects: {
+                include: {
+                  Presentation_Scedule: true,
+                },
+              },
+              Employees: true,
+            },
+          },
+          projects: {
+            include: {
+              project: {
+                include: {
+                  students: true,
+                  employee: true,
+                  Presentation_Scedule: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      return res.status(200).json(Employees);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
   }
 };
 

@@ -6,14 +6,21 @@ const handler = async (req, res) => {
       const { id } = req.query;
       const project = await prisma.project.findUnique({
         where: { id: parseInt(id) },
+        include: {
+          employee: true,
+          Panel: true,
+          Presentation_Scedule: true,
+          student_request: {
+            include: {
+              student: true,
+            },
+          },
+          students: true,
+        },
       });
+
       if (project) {
-        const students_of_project = await prisma.student.findMany({
-          where: { projectId: parseInt(id) },
-        });
-        return res
-          .status(200)
-          .json({ project: project, students_of_project: students_of_project });
+        return res.status(200).json(project);
       }
     } catch (error) {
       console.log(error);

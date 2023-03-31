@@ -13,49 +13,40 @@ import JoinRequest from "./joinRequests";
 import EditPage from "./editPage";
 import { options, sdgList, attributes } from "./createOrJoin";
 import { fetchProject } from "../../redux/features/project/projectSlice";
+
 import {
   AddSupervisor,
   fetch_students_of_group,
 } from "../../redux/features/coordinator/coordinator_slice";
 import { EmployeeRole } from "@prisma/client";
-import { fetProject } from "../../redux/features/student/studentSlice";
+
+import Presentation from "./presentation/presentation";
+import {
+  fetchStudents,
+  fetProject,
+  addStudentByAdminStudent,
+  clearAddingStudentError,
+  removeStudentByAdminStudent,
+} from "../../redux/features/student/studentSlice";
 
 const Student_home = () => {
   const { data: session } = useSession();
   const { projectId, reg_no } = session.user;
-
+  const [addStudent, setAddStudent] = useState(false);
+  const [addingStudent_reg_no, setAddingStudent_reg_no] = useState("");
+  const [addingSuperVisorEmail, setAddingSuperVisorEmail] = useState("");
   const { render } = useContext(NavbarContext);
   const dispatch = useDispatch();
-  console.log(render);
-  const students_of_group = useSelector((state) => state.coordinator.students);
-  const [employee_email, setEmployee_email] = useState("");
-  console.log("coordinator");
-  const projects = useSelector((state) => state.coordinator.projects.projects);
-  console.log(projects);
-  const data = useSelector((state) => state.project.project);
-  function findProjectByRegNo(projects, regNo) {
-    return (
-      projects.find((project) =>
-        project.students.some((student) => student.reg_no === regNo)
-      ) || null
-    );
-  }
-  function findSuperVisor(projects) {
-    return (
-      projects.find((project) =>
-        project.employee.some((student) => student.role === "ADVISOR")
-      ) || null
-    );
-  }
-  const myProject = findProjectByRegNo(projects, reg_no);
-  console.log("super visor ");
-  const supervisor = findProjectByRegNo(projects);
-  console.log(supervisor);
-  console.log("this is my project ok done ");
+  console.log("student");
+  const student = useSelector((state) => state.student.student);
+  console.log("project");
+  const myProject = useSelector((state) => state.student?.projects);
+  const addingStudentError = useSelector(
+    (state) => state.student?.addingStudentByStudentError
+  );
+  console.log(addingStudentError);
   console.log(myProject);
-  console.log(data);
-  console.log(students_of_group);
-
+  console.log(student);
   const data2 = {
     projectId: projectId,
     reg_no: reg_no,
@@ -63,27 +54,57 @@ const Student_home = () => {
   useEffect(() => {
     dispatch(fetchProject(projectId));
   }, []);
+  useEffect(() => {
+    dispatch(fetProject(projectId));
+  }, []);
   console.log(projectId);
   const handleAddingSupervisor = (e) => {
     e.preventDefault();
-    if (employee_email) {
+    if (addingSuperVisorEmail) {
       const data3 = {
-        employee_email,
+        employee_email: addingSuperVisorEmail,
         projectId,
         role: EmployeeRole.ADVISOR,
       };
       dispatch(AddSupervisor(data3));
     }
   };
-  console.log("use effect with fet ");
   useEffect(() => {
-    console.log("fet projects is called ");
-    dispatch(fetProject());
+    dispatch(fetchStudents(reg_no));
   }, []);
-
+  const handleAddingStudent = () => {
+    if (addingStudent_reg_no && projectId) {
+      const data = {
+        reg_no: addingStudent_reg_no,
+        projectId: projectId,
+      };
+      dispatch(addStudentByAdminStudent(data));
+      setAddingStudent_reg_no("");
+      setAddStudent(false);
+    } else {
+      alert("plz write reg no");
+    }
+  };
   useEffect(() => {
-    dispatch(fetch_students_of_group(projectId));
-  }, []);
+    console.log("I am called");
+    const timer = setTimeout(() => {
+      console.log("I am called after 3 seconds");
+      dispatch(clearAddingStudentError(""));
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [addingStudentError, dispatch]);
+  // const handleRemovingStudent = (reg_no) => {
+  //   if (reg_no && projectId) {
+  //     const data = {
+  //       reg_no: reg_no,
+  //       projectId: projectId,
+  //       remove: true,
+  //     };
+  //     dispatch(removeStudentByAdminStudent(data));
+  //   } else {
+  //     alert("plz write reg no");
+  //   }
+  // };
   return (
     <div>
       <div className="navbar">
@@ -124,7 +145,7 @@ const Student_home = () => {
                     <span className="text-blue-200 flex-1 text-2xl">
                       Co Supervisor email
                     </span>{" "}
-                    <span className="flex-1">
+                    {/* <span className="flex-1">
                       {supervisor === null ? (
                         <div className="flex">
                           <input
@@ -154,7 +175,7 @@ const Student_home = () => {
                           </span>
                         </div>
                       )}
-                    </span>
+                    </span> */}
                   </div>
                   <div className="flex gap-24 items-center">
                     <span className="text-blue-200 flex-1 text-2xl">
@@ -162,23 +183,30 @@ const Student_home = () => {
                       Supervisor email
                     </span>{" "}
                     <span className="pl-4 flex flex-1">
-                      {data?.supervisor_email === null ? (
+                      {myProject?.employee === null ? (
                         <div className="">
                           <input
-                            className="p-2 flex items-start rounded-lg outline-blue-400"
+                            className="p-2 flex items-start text-black rounded-lg outline-blue-400"
                             placeholder="add supervisor email"
+                            value={addingSuperVisorEmail}
+                            onChange={(e) =>
+                              setAddingSuperVisorEmail(e.target.value)
+                            }
                           />
-                          <button className="bg-slate-600 p-2 text-blue-200 rounded-lg">
+                          <button
+                            onClick={(e) => handleAddingSupervisor(e)}
+                            className="bg-slate-600 p-2 text-blue-200 rounded-lg"
+                          >
                             submit
                           </button>
                         </div>
                       ) : (
                         <div>
                           <span className="flex-1 items-center flex justify-center">
-                            {myProject?.employee[0].employee_email}
+                            {myProject?.employee[0]?.employee_email}
                           </span>
                           <span>
-                            {data?.supervisor_accepted ? (
+                            {myProject?.supervisor_accepted ? (
                               <p>Accepted</p>
                             ) : (
                               "Pending"
@@ -194,7 +222,7 @@ const Student_home = () => {
                 <span className="text-blue-200  pl-12 pt-0 text-4xl">
                   Description
                 </span>
-                <span className="pl-12 text-xl">{data?.description}</span>
+                <span className="pl-12 text-xl">{myProject?.description}</span>
               </div>
             </div>
           ) : (
@@ -209,27 +237,57 @@ const Student_home = () => {
                     <th className="border text-center p-2">Name</th>
                     <th className="border text-center p-2">Contact No</th>
                     <th className="border text-center p-2">email</th>
-                    <th className="border text-center p-2">Edit/delete</th>
+                    <th className="border text-center p-2">Remove</th>
                   </tr>
-                  {students_of_group?.map((x) => (
+                  {myProject?.students?.map((x) => (
                     <StudentList
                       onEdit={() => {
                         console.log(x.reg_no);
                         setEdit(true);
                       }}
                       student={x}
-                      onDelete={() => {
-                        confirmDelete(x.reg_no);
-                      }}
+                      projectId={projectId}
+                      reg_no={x.reg_no}
                     />
                   ))}
                 </tbody>
               </table>{" "}
+              <div className="addStudent flex flex-col w-1/4 gap-2 p-2">
+                {addingStudentError && <span>{addingStudentError}</span>}
+                <button
+                  onClick={() => setAddStudent(!addStudent)}
+                  className={
+                    addStudent
+                      ? `bg-red-700 text-white rounded-lg cursor-pointer p-2 hover:bg-red-500`
+                      : `bg-green-700 text-white rounded-lg cursor-pointer p-2 hover:bg-green-500`
+                  }
+                >
+                  {addStudent ? "Cancel" : "Add Student"}
+                </button>
+                {addStudent && (
+                  <>
+                    {addingStudentError && <span>{addingStudentError}</span>}
+                    <input
+                      type="text"
+                      value={addingStudent_reg_no}
+                      className="text-black p-2 rounded-lg"
+                      onChange={(e) => setAddingStudent_reg_no(e.target.value)}
+                      placeholder="Write student reg no"
+                    />
+                    <button
+                      className="bg-green-700 text-white p-2 rounded-lg cursor-pointer hover:bg-green-500"
+                      onClick={(e) => handleAddingStudent(e)}
+                    >
+                      Submit
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           ) : (
             ""
           )}
-          {render === "Add member" ? <Email /> : ""}
+          {render === "Presentation" ? <Presentation /> : ""}
           {render === "join requests" ? <JoinRequest data={data2} /> : ""}
           {render === "AddForm" ? <AddForm /> : ""}
           {render === "Edit Project" ? (

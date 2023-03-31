@@ -7,10 +7,21 @@ import AddForm from "./addForm";
 import { useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { EmployeeRole } from "@prisma/client";
+
 import { NavbarContext } from "../navbarContext";
 import Presentation from "../presentation/presentation";
+import {
+  AddStudentFromProjectByCoordinator,
+  deleteProject,
+  handleProjectApproval,
+} from "../../../redux/features/coordinator/coordinator_slice";
+import DeleteConfirmation from "../confirmation/confirm";
+
 const Student_home = () => {
   const { data: session } = useSession();
+
+  const [addingStudent_reg_no, setAddingStudent_reg_no] = useState("");
+  const [addStudent, setAddStudent] = useState(false);
   const projectId = useSelector((state) => state.student.projectId);
   const { render } = useContext(NavbarContext);
   const dispatch = useDispatch();
@@ -18,6 +29,8 @@ const Student_home = () => {
   const [employee_email, setEmployee_email] = useState("");
   console.log("coordinator");
   const projects = useSelector((state) => state.coordinator.projects.projects);
+  console.log("all project from coordinator slice");
+  console.log(projects);
   console.log("these are the thisProject ");
   const thisProject = projects.filter((x) => x.id === projectId)[0];
   console.log("this project");
@@ -27,6 +40,31 @@ const Student_home = () => {
   console.log(thisProject.students.length);
   const [recommend, setRecommend] = useState(false);
   const [add, setadd] = useState(true);
+  const [status, setStatus] = useState("");
+  const HandleProjectApproval = () => {
+    if (status && projectId) {
+      const data = {
+        status: status,
+        projectId: projectId,
+      };
+      dispatch(handleProjectApproval(data));
+    }
+  };
+  const handleAddingStudent = (e) => {
+    e.preventDefault();
+    if (projectId && addingStudent_reg_no) {
+      const data = {
+        reg_no: addingStudent_reg_no,
+        projectId: projectId,
+      };
+      dispatch(AddStudentFromProjectByCoordinator(data));
+      setAddingStudent_reg_no("");
+      setAddStudent(false);
+    } else {
+      alert("plz write reg no");
+    }
+  };
+
   return (
     <div>
       <div>
@@ -51,7 +89,13 @@ const Student_home = () => {
                     {thisProject?.status === "PENDING" ? (
                       <div className="flex gap-12">
                         <span>{thisProject?.status}</span>
-                        <span className="bg-green-700 hover:bg-green-500 cursor-pointer text-white p-2 rounded-lg">
+                        <span
+                          onClick={() => {
+                            setStatus("ACCEPTED");
+                            HandleProjectApproval();
+                          }}
+                          className="bg-green-700 hover:bg-green-500 cursor-pointer text-white p-2 rounded-lg"
+                        >
                           Accept
                         </span>
                         <span
@@ -194,14 +238,6 @@ const Student_home = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col gap-5 items-center justify-center p-8 pt-0">
-                  <span className="text-blue-200  pl-12 pt-0 text-4xl">
-                    Description
-                  </span>
-                  <span className="pl-12 text-xl">
-                    {thisProject?.description}
-                  </span>
-                </div>
               </div>
             </div>
           ) : (
@@ -215,7 +251,7 @@ const Student_home = () => {
                   <input
                     type="text"
                     placeholder="write venue here"
-                    className="p-2 rounded-lg"
+                    className="p-2 rounded-lg "
                   />
                 </div>
               ) : (
@@ -229,38 +265,87 @@ const Student_home = () => {
           </span>
           <div className="div_home_table_student">
             {thisProject?.students?.length > 0 ? (
-              <table className="table  mt-8 bg-slate-200    border-collapse border-slate-500 w-full ">
-                <tbody>
-                  <tr className="bg-slate-600  border-blue-500 text-3xl text-white">
-                    <th className="border text-center p-2">Student Reg No</th>
-                    <th className="border text-center p-2">Name</th>
-                    <th className="border text-center p-2">Contact No</th>
-                    <th className="border text-center p-2">email</th>
-                    <th className="border text-center p-2">Edit/delete</th>
-                  </tr>
+              <>
+                <table className="table  mt-8 bg-slate-200    border-collapse border-slate-500 w-full ">
+                  <tbody>
+                    <tr className="bg-slate-600  border-blue-500 text-3xl text-white">
+                      <th className="border text-center p-2">Student Reg No</th>
+                      <th className="border text-center p-2">Name</th>
+                      <th className="border text-center p-2">Contact No</th>
+                      <th className="border text-center p-2">email</th>
+                      <th className="border text-center p-2">Edit/delete</th>
+                    </tr>
 
-                  {thisProject?.students?.map((x) => (
-                    <StudentList
-                      onEdit={() => {
-                        console.log(x.reg_no);
-                        setEdit(true);
-                      }}
-                      student={x}
-                      onDelete={() => {
-                        confirmDelete(x.reg_no);
-                      }}
-                    />
-                  ))}
-                </tbody>
-              </table>
+                    {thisProject?.students?.map((x) => (
+                      <StudentList
+                        projectId={thisProject?.id}
+                        onEdit={() => {
+                          console.log(x.reg_no);
+                        }}
+                        student={x}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+                <div className="addStudent flex flex-col w-1/4 gap-2 p-2">
+                  <button
+                    onClick={() => setAddStudent(!addStudent)}
+                    className={
+                      addStudent
+                        ? `bg-red-700 text-white rounded-lg cursor-pointer p-2 hover:bg-red-500`
+                        : `bg-green-700 text-white rounded-lg cursor-pointer p-2 hover:bg-green-500`
+                    }
+                  >
+                    {addStudent ? "Cancel" : "Add Student"}
+                  </button>
+                  {addStudent && (
+                    <>
+                      {" "}
+                      <input
+                        type="text"
+                        value={addingStudent_reg_no}
+                        className="text-black p-2 rounded-lg"
+                        onChange={(e) =>
+                          setAddingStudent_reg_no(e.target.value)
+                        }
+                        placeholder="Write student reg no"
+                      />
+                      <button
+                        className="bg-green-700 text-white p-2 rounded-lg cursor-pointer hover:bg-green-500"
+                        onClick={(e) => handleAddingStudent(e)}
+                      >
+                        Submit
+                      </button>
+                    </>
+                  )}
+                </div>
+              </>
             ) : (
               <div className="flex flex-col gap-2 items-center justify-center">
                 <span>No student found in this project</span>
-                <span>Delete this project ?</span>
+                <div className="addStudent flex flex-col">
+                  <button>Add Student</button>
+                  <div className="flex flex-col">
+                    <input
+                      type="text"
+                      value={addingStudent_reg_no}
+                      onChange={(e) => setAddingStudent_reg_no(e.target.value)}
+                      placeholder="Write student reg no"
+                      className="text-black"
+                    />
+                    <button onClick={(e) => handleAddingStudent(e)}>
+                      Submit
+                    </button>
+                  </div>
+                </div>
+                <DeleteConfirmation
+                  postId={thisProject?.id}
+                  onDelete={() => console.log("clicked")}
+                />
               </div>
             )}
           </div>
-        </div>{" "}
+        </div>
       </div>
     </div>
   );

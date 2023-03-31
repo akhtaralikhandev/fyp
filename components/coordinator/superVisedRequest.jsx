@@ -28,7 +28,7 @@ const SuperVisedProjectsRequests = () => {
     };
     dispatch(AcceptOrRejectSupervisingRequest(data));
   };
-
+  console.log("this is the supervised requests page");
   console.log(filteredEmployees);
   console.log(projects);
   console.log(email);
@@ -41,7 +41,10 @@ const SuperVisedProjectsRequests = () => {
             <li>{x.role}</li>
             <li>{x.status}</li>
             <li
-              onClick={() => handleAccept("ACCEPTED", x)}
+              onClick={() => {
+                console.log("clicked");
+                handleAccept("ACCEPTED", x);
+              }}
               className="bg-green-700 cursor-pointer p-2 rounded-lg"
             >
               Accept

@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 const handler = async (req, res) => {
   if (req.method === "POST") {
     try {
-      const { emails } = req.body;
+      const { emails, projects } = req.body;
       const assignedEmployees = await prisma.employee.findMany({
         where: {
           panelNumber: {
@@ -27,6 +27,29 @@ const handler = async (req, res) => {
           assignedEmails,
         });
       }
+      const assignedProjects = await prisma.project.findMany({
+        where: {
+          panelNumber: {
+            not: null,
+          },
+          email: {
+            in: emails,
+          },
+        },
+        select: {
+          email: true,
+        },
+      });
+      if (assignedProjects.length > 0) {
+        const assignedProject = assignedProjects.map(
+          (employee) => employee.email
+        );
+        return res.status(403).json({
+          message:
+            "Some of the provided Projects are already assigned to a panel",
+          assignedProject,
+        });
+      }
       const createdPanel = await prisma.panel.create({
         data: {
           projects: {
@@ -45,15 +68,48 @@ const handler = async (req, res) => {
   } else if (req.method === "PUT" && req.body.email) {
     const { id, email } = req.body;
     try {
+      const alreadyPartOfPanel = await prisma.panel.findFirst({
+        where: {
+          id: parseInt(id),
+          Employees: {
+            some: {
+              email: email,
+            },
+          },
+        },
+      });
+      if (alreadyPartOfPanel)
+        return res.status(404).json({
+          message: "this is already part of a panel",
+          alreadyPartOfPanel,
+        });
       const updatePanel = await prisma.panel.update({
         where: { id: parseInt(id) },
+        include: {
+          Employees: true,
+          projects: {
+            include: {
+              employee: {
+                where: {
+                  role: "ADVISOR",
+                },
+              },
+              Presentation_Scedule: true,
+            },
+          },
+        },
         data: {
           Employees: {
             connect: { email: email },
           },
         },
       });
-      return res.status(200).json(updatePanel);
+      const panelWithCounts = {
+        ...updatePanel,
+        totalEmployee: updatePanel.Employees.length,
+        totalProjects: updatePanel.projects.length,
+      };
+      return res.status(200).json(panelWithCounts);
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);
@@ -62,15 +118,48 @@ const handler = async (req, res) => {
     const { id, projectId } = req.body;
     console.log(req.body);
     try {
-      const updateProject = await prisma.panel.update({
+      const alreadyPartOfPanel = await prisma.panel.findFirst({
+        where: {
+          id: parseInt(id),
+          projects: {
+            some: {
+              id: parseInt(projectId),
+            },
+          },
+        },
+      });
+      if (alreadyPartOfPanel)
+        return res.status(404).json({
+          message: "this is already part of a panel",
+          alreadyPartOfPanel,
+        });
+      const updatePanel = await prisma.panel.update({
         where: { id: parseInt(id) },
+        include: {
+          Employees: true,
+          projects: {
+            include: {
+              employee: {
+                where: {
+                  role: "ADVISOR",
+                },
+              },
+              Presentation_Scedule: true,
+            },
+          },
+        },
         data: {
           projects: {
             connect: { id: parseInt(projectId) },
           },
         },
       });
-      return res.status(200).json(updateProject);
+      const panel = {
+        ...updatePanel,
+        totalEmployee: updatePanel.Employees.length,
+        totalProjects: updatePanel.projects.length,
+      };
+      return res.status(200).json(panel);
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);

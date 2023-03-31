@@ -1,17 +1,32 @@
 import { useFormik } from "formik";
 import Image from "next/image";
+
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import * as Yup from "yup";
 import { createStudent } from "../../lib/student/register";
+import {
+  clearFailure,
+  clearMsg,
+  registerStudent,
+} from "../../redux/features/student/studentSlice";
 const options = [
   { value: "FME", label: "FME" },
   { value: "FCSE", label: "FCSE" },
   { value: "FEE", label: "FEE" },
 ];
-const Faculty_Register = () => {
+const StudentRegister = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isFailure, setIsFailure] = useState(false);
+  const registerSuccess = useSelector(
+    (state) => state.student.studentRegisterSuccess
+  );
+  const registerFailure = useSelector(
+    (state) => state.student.studentRegisterFailure
+  );
+  console.log(registerSuccess);
+  const dispatch = useDispatch();
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -44,13 +59,27 @@ const Faculty_Register = () => {
     }),
     onSubmit: async (values) => {
       try {
-        const resp = await createStudent(values);
-        console.log(resp);
+        dispatch(registerStudent(values));
       } catch (error) {
         console.log(error);
       }
     },
   });
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(clearMsg(""));
+      console.log("useEffect with clear msg called");
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [registerSuccess]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(clearFailure(""));
+      console.log("useEffect with clear msg called");
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [registerFailure]);
+
   console.log(formik.values.firstName);
   console.log(formik.touched);
   return (
@@ -71,6 +100,12 @@ const Faculty_Register = () => {
           <div className="form_wrapper pt-4 pb-0 md:flex-nowrap flex-wrap justify-start items-start  flex flex-col gap-6 rounded-lg md:p-8 w-full p-4 ">
             <span className="text-2xl sm:text-3xl md:text-4xl">
               Register As Student For Final Year Project
+            </span>
+            <span className=" left-96 text-red-500 text-2xl">
+              {registerSuccess && <span> {registerSuccess} </span>}
+            </span>
+            <span className=" left-96 text-red-500 text-2xl">
+              {registerFailure && <span> {registerFailure} </span>}
             </span>
             <div className="flex sm:flex-row flex-col gap-4 w-full">
               <div className="flex flex-col md:flex-nowrap flex-wrap flex-1">
@@ -225,4 +260,4 @@ const Faculty_Register = () => {
   );
 };
 
-export default Faculty_Register;
+export default StudentRegister;

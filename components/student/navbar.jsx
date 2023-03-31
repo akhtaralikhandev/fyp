@@ -7,6 +7,7 @@ import {
   HavingProject,
   leaveGroup,
 } from "../../redux/features/student/studentSlice";
+import LeaveGroup from "./confirm/leaveGroup";
 const Navbar = () => {
   const { setRender } = useContext(NavbarContext);
   const dispatch = useDispatch();
@@ -34,10 +35,10 @@ const Navbar = () => {
           Group Members
         </li>
         <li
-          onClick={() => setRender("AddForm")}
+          onClick={() => setRender("Presentation")}
           className=" cursor-pointer hover:text-gray-300 "
         >
-          Add member
+          Presentation
         </li>
         <li
           onClick={() => setRender("join requests")}
@@ -59,11 +60,8 @@ const Navbar = () => {
         >
           sign out
         </button>
-        <span
-          onClick={() => handleLeaveGroup()}
-          className="  bg-slate-500 p-2 cursor-pointer rounded-lg hover:text-black hover:bg-slate-300 right-12 top-8"
-        >
-          Leave Group
+        <span>
+          <LeaveGroup />
         </span>
       </div>
     </div>

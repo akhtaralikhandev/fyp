@@ -96,6 +96,7 @@ export const handleAddingStudent2 = createAsyncThunk(
         `http://localhost:3000/api/project/joinRequest?reg_no=${data.reg_no}&projectId=${data.projectId}&id=${data.id}`,
         {
           projectId: data.projectId,
+          status: data.status,
         }
       );
       console.log(resp.data);
@@ -142,6 +143,65 @@ export const AddCoSupervisor = createAsyncThunk(
     return resp.data;
   }
 );
+export const deleteProject = createAsyncThunk(
+  "project/delete",
+  async (projectId) => {
+    const resp = await axios.delete(
+      `http://localhost:3000/api/coordinator/projectList?projectId=${projectId}`
+    );
+    console.log(resp.data);
+    return resp.data;
+  }
+);
+export const DeleteStudentFromProjectByCoordinator = createAsyncThunk(
+  "deleteStudentFromProjectByCoordinator",
+  async (data, thunkAPI) => {
+    try {
+      const resp = await axios.put(
+        `http://localhost:3000/api/project/student`,
+        data
+      );
+      console.log(resp.data);
+      return resp.data;
+    } catch (error) {
+      console.error(error);
+      return thunkAPI.rejectWithValue(error.response.data); // pass the error response data to the rejected state
+    }
+  }
+);
+export const AddStudentFromProjectByCoordinator = createAsyncThunk(
+  "AddStudentFromProjectByCoordinator",
+  async (data, thunkAPI) => {
+    try {
+      const resp = await axios.put(
+        `http://localhost:3000/api/project/student`,
+        data
+      );
+      console.log(resp.data);
+      return resp.data;
+    } catch (error) {
+      console.error(error);
+      return thunkAPI.rejectWithValue(error.response.data); // pass the error response data to the rejected state
+    }
+  }
+);
+export const updateStudentFromProjectByCoordinator = createAsyncThunk(
+  "updateStudentFromProjectByCoordinator",
+  async (data, thunkAPI) => {
+    try {
+      const resp = await axios.put(
+        `http://localhost:3000/api/coordinator/students?reg_no=${data.reg_no}`,
+        data
+      );
+      console.log(resp.data);
+      console.log("this is the edited project");
+      return resp.data;
+    } catch (error) {
+      console.error(error);
+      return thunkAPI.rejectWithValue(error.response.data); // pass the error response data to the rejected state
+    }
+  }
+);
 const coordinatorSlice = createSlice({
   name: "coordinator",
   initialState,
@@ -169,8 +229,8 @@ const coordinatorSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchProjects.fulfilled, (state, action) => {
-        console.log("fetchprojects called");
-        console.log(action.payload);
+        console.log("fetchprojects called from coordinator slice");
+        console.log(action.payload.projects);
         state.projects = action.payload;
       })
       .addCase(fetch_students_of_group.fulfilled, (state, action) => {
@@ -180,7 +240,36 @@ const coordinatorSlice = createSlice({
       })
       .addCase(handleAddingStudent.fulfilled, (state, action) => {
         state.students.push(action.payload);
-      });
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.projects.projects = state.projects.projects.filter(
+          (project) => project.id !== action.payload.id
+        );
+      })
+      .addCase(
+        DeleteStudentFromProjectByCoordinator.fulfilled,
+        (state, action) => {
+          const { id, students } = action.payload;
+          const projectIndex = state.projects?.projects?.findIndex(
+            (project) => project.id === id
+          );
+          if (projectIndex !== -1) {
+            state.projects.projects[projectIndex].students = students;
+          }
+        }
+      )
+      .addCase(
+        AddStudentFromProjectByCoordinator.fulfilled,
+        (state, action) => {
+          const { id, students } = action.payload;
+          const projectIndex = state.projects?.projects?.findIndex(
+            (project) => project.id === id
+          );
+          if (projectIndex !== -1) {
+            state.projects.projects[projectIndex].students = students;
+          }
+        }
+      );
   },
 });
 export const { setIndex, removeStudent, updateProjectStatus } =

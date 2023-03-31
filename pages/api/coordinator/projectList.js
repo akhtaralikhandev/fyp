@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient, Prisma, ProjectStatus } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const handler = async (req, res) => {
@@ -32,6 +32,7 @@ const handler = async (req, res) => {
               Panel: true,
               Presentation_Scedule: true,
               students: true,
+              student_request: true,
             },
           },
         },
@@ -50,14 +51,47 @@ const handler = async (req, res) => {
     }
   } else if (req.method === "PUT") {
     const { id, status } = req.body;
+    console.log(req.body);
+    if (status === "ACCEPTED") {
+      console.log("accepted called");
+      try {
+        const project = await prisma.project.update({
+          where: { id: parseInt(id) },
+          data: {
+            status: ProjectStatus.APPROVED,
+          },
+        });
+        console.log(project);
+        return res.status(200).json(project);
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+      }
+    }
+  } else if (req.method === "DELETE") {
+    const { projectId } = req.query;
     try {
-      const project = await prisma.project.update({
-        where: { id: parseInt(id) },
-        data: {
-          status: status,
-        },
+      // delete all Employee_Project records with matching projectId
+      await prisma.employee_Project.deleteMany({
+        where: { project_id: parseInt(projectId) },
       });
-      return res.status(200).json(project);
+
+      // delete the project once all related records have been deleted
+      const deletedProject = await prisma.project.delete({
+        where: { id: parseInt(projectId) },
+      });
+
+      return res
+        .status(200)
+        .json({ message: "deleted successfully", deletedProject });
+
+      return res
+        .status(200)
+        .json({ message: "deleted successfully", deletedProject });
+
+      return res
+        .status(200)
+        .json({ message: "deleted successfully", deletedproject });
     } catch (error) {
       console.log(error);
       return res.status(500).json(error);

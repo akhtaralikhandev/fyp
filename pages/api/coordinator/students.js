@@ -42,15 +42,16 @@ const handler = async (req, res) => {
     }
   } else if (req.method === "PUT") {
     const { reg_no } = req.query;
-    const { data } = req.body;
+    const { name, email, contact_no } = req.body;
+
     try {
       const student = await prisma.student.update({
         where: { reg_no: parseInt(reg_no) },
         data: {
-          name: data.name,
-          reg_no: data.reg_no,
-          email: data.email,
-          contact_no: data.contact_no,
+          name,
+          reg_no: parseInt(reg_no),
+          email,
+          contact_no,
         },
       });
       return res.status(200).json(student);

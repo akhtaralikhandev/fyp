@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { createProject, joinProject } from "../../lib/project/create";
 import { signOut } from "next-auth/react";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,8 +8,13 @@ import {
   fetch_students_of_group,
 } from "../../redux/features/coordinator/coordinator_slice";
 import axios from "axios";
-import { joinRequests } from "../../redux/features/student/studentSlice";
+import {
+  fetchStudents,
+  joinRequests,
+  undoJoinRequests,
+} from "../../redux/features/student/studentSlice";
 import { EmployeeRole } from "@prisma/client";
+
 export const options = [
   { value: "FME", label: "FME" },
   { value: "FCSE", label: "FCSE" },
@@ -47,6 +53,8 @@ export const attributes = [
   },
 ];
 const CreateOrJoinGroup = () => {
+  const { data: session } = useSession();
+  const { reg_no, email } = session.user;
   const [title, setTitle] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [description, setDescription] = useState("");
@@ -58,10 +66,9 @@ const CreateOrJoinGroup = () => {
   const [error, setError] = useState("");
   const [response2, setResponse2] = useState("");
   const [error2, setError2] = useState("");
-  const user_email = useSelector((state) => state.user.user.email);
-  const reg_no = useSelector((state) => state.user.user.reg_no);
+
   const department_name2 = useSelector(
-    (state) => state.user.user.department_name
+    (state) => state?.user?.user?.department_name
   );
   console.log(department_name2);
   const projects = useSelector((state) => state.coordinator.projects.projects);
@@ -71,15 +78,22 @@ const CreateOrJoinGroup = () => {
   console.log(students_of_group);
   const dispatch = useDispatch();
   console.log(projects);
-  console.log(user_email);
-
+  console.log(email);
+  const student = useSelector((state) => state.student.student);
+  console.log("student information");
+  console.log(student);
+  const ProjectJoiningRequest = useSelector(
+    (state) => state.student.student?.ProjectJoiningRequest
+  );
+  console.log("project joinging requests ");
+  console.log(ProjectJoiningRequest);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
       title: title,
       description: description,
       department_name: department_name,
-      student_email: user_email,
+      student_email: email,
       supervisor_email: supervisor_email,
       coSuperVisor_email: coSuperVisor_email,
       EmployeeRole: {
@@ -130,24 +144,27 @@ const CreateOrJoinGroup = () => {
     console.log("useEffect calledd");
   }, []);
   useEffect(() => {
-    projects.forEach((project) => {
+    projects?.forEach((project) => {
       console.log(project.id);
       dispatch(fetch_students_of_group(project.id));
     });
   }, [projects]);
-
+  useEffect(() => {
+    console.log("fetch students called");
+    dispatch(fetchStudents(reg_no));
+  }, []);
   return (
     <div className="createOrJoinGroup bg-slate-800">
-      <div className="createOrJoin_wrapper  pt-12 flex w-2/3 justify-center xl:pl-24  gap-4 flex-col">
+      <div className="createOrJoin_wrapper  pt-12 flex  justify-center xl:pl-24  gap-4 flex-col">
         <div className="flex gap-8 ">
           <span
-            className="bg-slate-700 rounded-xl text-white cursor-pointer p-2"
+            className="bg-slate-700 rounded-xl hover:bg-slate-500 text-white cursor-pointer p-2"
             onClick={() => setJoin(true)}
           >
             Join Group
           </span>
           <span
-            className="bg-slate-700 rounded-xl cursor-pointer text-white p-2"
+            className="bg-slate-700 hover:bg-slate-500 rounded-xl cursor-pointer text-white p-2"
             onClick={() => setJoin(false)}
           >
             Create Group
@@ -164,7 +181,7 @@ const CreateOrJoinGroup = () => {
 
             <button
               onClick={(e) => handleSubmit_2(e)}
-              className="bg-slate-700 p-2 rounded-xl text-white"
+              className="bg-slate-700 p-2 rounded-xl w-1/4 hover:bg-slate-500 text-white"
             >
               Submit
             </button>
@@ -177,28 +194,56 @@ const CreateOrJoinGroup = () => {
                   <th className="border text-center p-2">Total Students</th>
                   <th className="border text-center p-2">Join Request</th>
                 </tr>
-                {projects?.map((x) => (
-                  <tr className="studentlist_tr text-black">
-                    <td className="border  cursor-pointer  text-xl p-2">
-                      {x.id}
-                    </td>
-                    <td className="border  cursor-pointer text-center p-2">
-                      {x.title}
-                    </td>
-                    <td className="border  cursor-pointer text-center p-2">
-                      {x.supervisor_email}
-                    </td>
-                    <td className="border  cursor-pointer text-center p-2">
-                      {x.numberOfStudents}
-                    </td>
-                    <td
-                      onClick={() => createRequest(x.id)}
-                      className="border  cursor-pointer hover:bg-blue-500 bg-blue-600 text-white text-center p-2"
-                    >
-                      Join Request
-                    </td>
-                  </tr>
-                ))}
+                {projects?.map((x) => {
+                  // console.log(isRequested);
+                  return (
+                    <tr className="studentlist_tr text-black">
+                      <td className="border  cursor-pointer text-center  text-xl p-2">
+                        {x.id}
+                      </td>
+                      <td className="border  cursor-pointer text-center p-2">
+                        {x.title}
+                      </td>
+                      <td className="border  cursor-pointer text-center p-2">
+                        {x?.employee[0]?.employee_email
+                          ? x?.employee[0]?.employee_email
+                          : "empty for now"}
+                      </td>
+                      <td className="border  cursor-pointer text-center p-2">
+                        {x?.students.length}
+                      </td>
+                      <td className="border   text-center p-2">
+                        {ProjectJoiningRequest?.some(
+                          (req) => req?.projectId === x?.id
+                        ) ? (
+                          <button
+                            className="bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-500  cursor-pointer"
+                            onClick={() => {
+                              const requestId = ProjectJoiningRequest.find(
+                                (req) => req?.projectId === x.id
+                              ).id;
+                              console.log(requestId);
+                              dispatch(undoJoinRequests(requestId));
+                            }}
+                          >
+                            Request sent
+                          </button>
+                        ) : (
+                          <button
+                            className="bg-green-700 text-white p-2 rounded-lg cursor-pointer"
+                            onClick={() => {
+                              console.log(x.id);
+                              console.log("called once ");
+                              createRequest(x.id);
+                            }}
+                          >
+                            Send Request
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -318,7 +363,7 @@ const CreateOrJoinGroup = () => {
         )}
       </div>
       <button
-        className="absolute bg-white top-5 right-5"
+        className="absolute bg-green-700 text-white hover:bg-green-500 top-5  p-2 rounded-lg right-5"
         onClick={() => signOut()}
       >
         sign out

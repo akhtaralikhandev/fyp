@@ -8,10 +8,23 @@ const handler = async (req, res) => {
         where: { reg_no: parseInt(reg_no) },
         include: {
           ProjectJoiningRequest: true,
-          project: true,
+          project: {
+            include: {
+              students: true,
+              student_request: true,
+              Presentation_Scedule: true,
+              employee: true,
+              Panel: {
+                include: {
+                  Employees: true,
+                },
+              },
+            },
+          },
           project_admin: true,
         },
       });
+
       return res.status(200).json(student);
     } catch (error) {
       console.log(error);

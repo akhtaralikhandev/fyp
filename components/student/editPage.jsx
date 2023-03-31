@@ -1,26 +1,31 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateProject } from "../../redux/features/project/projectSlice";
 import { useSession } from "next-auth/react";
+import { updateProject } from "../../redux/features/student/studentSlice";
+import { useRouter } from "next/router";
+import { NavbarContext } from "./navbarContext";
 const EditPage = ({ sdgList, attributes, options }) => {
+  const { render, setRender } = useContext(NavbarContext);
+  const router = useRouter();
   const { data: session } = useSession();
   const { projectId } = session.user;
-  const data = useSelector((state) => state.project.project);
+  const data = useSelector((state) => state.student.student?.project);
   console.log(data);
   const [title, setTitle] = useState(data?.title);
   const [description, setDescription] = useState(data?.description);
-
   const [department_name, setDepartment_name] = useState(data?.department_name);
   const dispatch = useDispatch();
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (description && title) {
+      console.log("clicked from edit page");
       const data = {
         projectId: projectId,
         title: title,
         description: description,
       };
       dispatch(updateProject(data));
+      setRender("Project Detail");
     }
   };
   return (
@@ -114,7 +119,7 @@ const EditPage = ({ sdgList, attributes, options }) => {
           </table>
 
           <button
-            className="bg-slate-700 p-2 rounded-xl text-white"
+            className="bg-green-700 p-2 rounded-xl w-1/4 hover:bg-green-500 cursor-pointer text-white"
             onClick={(e) => handleSubmit(e)}
           >
             submit

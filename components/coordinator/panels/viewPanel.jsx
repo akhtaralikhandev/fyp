@@ -1,11 +1,20 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { NavbarContext } from "../navbarContext";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import AddEmployee from "./AddEmp";
+
 import AddProject2 from "./addProject";
 import Presentation from "../presentation";
+import {
+  clearPanelUpdateError,
+  updatePanelByRemoving,
+} from "../../../redux/features/panel/panelSlice";
+import DeleteConfirmation from "./confirm/confirm";
 const ViewPanel = () => {
+  const dispatch = useDispatch();
   const allPanels = useSelector((state) => state.panel.panel);
+  const updatePanelError = useSelector((state) => state.panel.updatePanelError);
+  console.log(updatePanelError);
   console.log("view panel");
   const allEmployees = useSelector(
     (state) => state.coordinator.projects.employee
@@ -34,6 +43,24 @@ const ViewPanel = () => {
   console.log(panel);
   console.log(panel);
   console.log(id);
+  const handleRemove = (email) => {
+    if (id && email) {
+      const data = {
+        id: panel2?.id,
+        email: email,
+      };
+      dispatch(updatePanelByRemoving(data));
+    }
+  };
+  useEffect(() => {
+    console.log("I am called");
+    const timer = setTimeout(() => {
+      console.log("I am called after 3 seconds");
+      dispatch(clearPanelUpdateError(""));
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [updatePanelError, dispatch]);
+
   return (
     <div className="viewPanel">
       <div className="viewPanel_wrapper">
@@ -48,6 +75,7 @@ const ViewPanel = () => {
             className="close absolute right-10 bg-red-600 text-white rounded-lg p-2  cursor-pointer"
             onClick={() => {
               console.log("clicked");
+
               setId(panel2?.id);
               setViewMore(false);
             }}
@@ -63,7 +91,7 @@ const ViewPanel = () => {
               <th className="border text-center p-2">contact no</th>
               <th className="border text-center p-2">Remove</th>
             </tr>
-            {panel2?.Employees.map((x) => (
+            {panel2?.Employees?.map((x) => (
               <tr className="studentlist_tr text-black">
                 <td className="border  cursor-pointer text-center p-2">
                   {x?.email}
@@ -75,28 +103,20 @@ const ViewPanel = () => {
                   {x?.contact_no}
                 </td>
                 <td className="border flex gap-4 items-center justify-center cursor-pointer text-center p-2">
-                  <span
-                    onClick={() => {
-                      console.log("clicked");
-                      setId(panel2?.id);
-                      setViewMore(true);
-                    }}
-                    className="bg-green-700 p-2 rounded-lg text-white cursor-pointer"
-                  >
-                    Remove
-                  </span>
+                  <DeleteConfirmation email={x?.email} id={panel2?.id} />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>{" "}
-        <div className="mt-8">
+        <div className="mt-8 flex flex-col">
+          {updatePanelError && <span>{updatePanelError}</span>}
           <span
             onClick={() => setAddEmployee(!addEmployee)}
             className={
               addEmployee
-                ? "bg-red-700 cursor-pointer text-white p-2 rounded-lg m-2 mt-8"
-                : "bg-green-700 cursor-pointer text-white p-2 rounded-lg m-2 mt-8"
+                ? "bg-red-700 cursor-pointer w-1/4 text-white text-center p-2 rounded-lg m-2 mt-8"
+                : "bg-green-700 cursor-pointer w-1/4 text-center text-white p-2 rounded-lg m-2 mt-8"
             }
           >
             {addEmployee ? <span>Cancel </span> : <span>Add Employee</span>}
@@ -122,7 +142,7 @@ const ViewPanel = () => {
               </th>
               <th className="border text-center p-2"> Presentation Venue</th>
             </tr>
-            {panel2?.projects.map((x) => (
+            {panel2?.projects?.map((x) => (
               <tr className="studentlist_tr text-black">
                 <td className="border  cursor-pointer text-center p-2">
                   {x.id}
@@ -133,7 +153,7 @@ const ViewPanel = () => {
                 <td className="border  cursor-pointer text-center p-2">
                   {x.admin_student_email}
                 </td>
-                {x.Presentation_Scedule.date ? (
+                {x?.Presentation_Scedule?.date ? (
                   <>
                     <td className="border  cursor-pointer text-center p-2">
                       {x.Presentation_Scedule.date}
@@ -149,13 +169,14 @@ const ViewPanel = () => {
             ))}
           </tbody>
         </table>{" "}
-        <div className="mt-8">
+        <div className="mt-8 flex flex-col">
+          {updatePanelError && <span>{updatePanelError}</span>}
           <span
             onClick={() => setAddProject(!addProject)}
             className={
               addProject
-                ? "bg-red-700 cursor-pointer text-white p-2 rounded-lg m-2 mt-8"
-                : "bg-green-700 cursor-pointer text-white p-2 rounded-lg m-2 mt-8"
+                ? "bg-red-700 text-center cursor-pointer w-1/4 text-white p-2 rounded-lg m-2 mt-8"
+                : "bg-green-700 text-center cursor-pointer w-1/4 text-white p-2 rounded-lg m-2 mt-8"
             }
           >
             {addProject ? <span>Cancel </span> : <span>Add Project</span>}
