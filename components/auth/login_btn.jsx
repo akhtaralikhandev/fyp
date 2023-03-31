@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import CreateGroup from "../../pages/student/student";
-import Employee_home from "../employee/home";
 import { loginUser } from "../../redux/features/user/userSlice";
 import Home2 from "../../pages/superAdmin/home";
 import Coordinator_home from "../../pages/coordinator/Home";
