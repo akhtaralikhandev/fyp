@@ -11,7 +11,7 @@ export const AcceptOrRejectSupervisingRequest = createAsyncThunk(
   "acceptOrReject",
   async (data) => {
     const resp = await axios.put(
-      `http://localhost:3000/api/supervisor/projectRequest`,
+      `${process.env.URL}/supervisor/projectRequest`,
       data
     );
     console.log(resp);
@@ -22,7 +22,7 @@ export const fetchEmployee = createAsyncThunk(
   "fetch/employee",
   async (email) => {
     const resp = await axios.get(
-      `http://localhost:3000/api/employee/employee?email=${email}`
+      `${process.env.URL}/employee/employee?email=${email}`
     );
     console.log(resp.data);
     return resp.data;

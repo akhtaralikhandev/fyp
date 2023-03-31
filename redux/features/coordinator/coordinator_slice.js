@@ -10,7 +10,7 @@ export const AcceptOrRejectSupervisingRequest = createAsyncThunk(
   "acceptOrReject",
   async (data) => {
     const resp = await axios.put(
-      `http://localhost:3000/api/supervisor/projectRequest`,
+      `${process.env.URL}/supervisor/projectRequest`,
       data
     );
     console.log(resp);
@@ -21,7 +21,7 @@ export const fetchProjects = createAsyncThunk(
   "fetchProjects",
   async (department_name) => {
     const resp = await axios.get(
-      `http://localhost:3000/api/coordinator/projectList?department_name=${department_name}`
+      `${process.env.URL}/coordinator/projectList?department_name=${department_name}`
     );
     console.log(resp);
     console.log(department_name);
@@ -33,7 +33,7 @@ export const fetch_students_of_group = createAsyncThunk(
   "fetch_student",
   async (projectId) => {
     const resp = await axios.get(
-      `http://localhost:3000/api/coordinator/students?projectId=${projectId}`
+      `${process.env.URL}/coordinator/students?projectId=${projectId}`
     );
     console.log(projectId);
     console.log(resp);
@@ -45,7 +45,7 @@ export const handleProjectApproval = createAsyncThunk(
   async (data) => {
     try {
       const resp = await axios.put(
-        "http://localhost:3000/api/coordinator/projectList",
+        `${process.env.URL}/api/coordinator/projectList`,
         {
           id: data.projectId,
           status: data.status,
@@ -63,7 +63,7 @@ export const handleStudentRemoval = createAsyncThunk(
   async (reg_no) => {
     try {
       const resp = await axios.delete(
-        `http://localhost:3000/api/coordinator/students?reg_no=${reg_no}`
+        `${process.env.URL}/api/coordinator/students?reg_no=${reg_no}`
       );
       return resp.data;
     } catch (error) {
@@ -76,7 +76,7 @@ export const handleAddingStudent = createAsyncThunk(
   async (data) => {
     try {
       const resp = await axios.post(
-        `http://localhost:3000/api/coordinator/students?reg_no=${data.reg_no}`,
+        `${process.env.URL}/coordinator/students?reg_no=${data.reg_no}`,
         {
           projectId: data.projectId,
         }
@@ -93,7 +93,7 @@ export const handleAddingStudent2 = createAsyncThunk(
   async (data) => {
     try {
       const resp = await axios.put(
-        `http://localhost:3000/api/project/joinRequest?reg_no=${data.reg_no}&projectId=${data.projectId}&id=${data.id}`,
+        `${process.env.URL}/project/joinRequest?reg_no=${data.reg_no}&projectId=${data.projectId}&id=${data.id}`,
         {
           projectId: data.projectId,
           status: data.status,
@@ -111,7 +111,7 @@ export const handleEditingStudent = createAsyncThunk(
   async (data) => {
     try {
       const resp = await axios.put(
-        `http://localhost:3000/api/coordinator/students?reg_no=${data.reg_no}`,
+        `${process.env.URL}/coordinator/students?reg_no=${data.reg_no}`,
         {
           data,
         }
@@ -126,7 +126,7 @@ export const handleEditingStudent = createAsyncThunk(
 );
 export const AddSupervisor = createAsyncThunk("addSupervisor", async (data) => {
   const resp = await axios.post(
-    "http://localhost:3000/api/employee_project/supervisor",
+    `${process.env.URL}/employee_project/supervisor`,
     data
   );
   console.log(resp.data);
@@ -136,7 +136,7 @@ export const AddCoSupervisor = createAsyncThunk(
   "AddCoSupervisor",
   async (data) => {
     const resp = await axios.post(
-      "http://localhost:3000/api/employee_project/cosupervisor",
+      `${process.env.URL}/employee_project/cosupervisor`,
       data
     );
     console.log(resp.data);
@@ -147,7 +147,7 @@ export const deleteProject = createAsyncThunk(
   "project/delete",
   async (projectId) => {
     const resp = await axios.delete(
-      `http://localhost:3000/api/coordinator/projectList?projectId=${projectId}`
+      `${process.env.URL}/coordinator/projectList?projectId=${projectId}`
     );
     console.log(resp.data);
     return resp.data;
@@ -157,10 +157,7 @@ export const DeleteStudentFromProjectByCoordinator = createAsyncThunk(
   "deleteStudentFromProjectByCoordinator",
   async (data, thunkAPI) => {
     try {
-      const resp = await axios.put(
-        `http://localhost:3000/api/project/student`,
-        data
-      );
+      const resp = await axios.put(`${process.env.URL}/project/student`, data);
       console.log(resp.data);
       return resp.data;
     } catch (error) {
@@ -173,10 +170,7 @@ export const AddStudentFromProjectByCoordinator = createAsyncThunk(
   "AddStudentFromProjectByCoordinator",
   async (data, thunkAPI) => {
     try {
-      const resp = await axios.put(
-        `http://localhost:3000/api/project/student`,
-        data
-      );
+      const resp = await axios.put(`${process.env.URL}/project/student`, data);
       console.log(resp.data);
       return resp.data;
     } catch (error) {
@@ -190,7 +184,7 @@ export const updateStudentFromProjectByCoordinator = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const resp = await axios.put(
-        `http://localhost:3000/api/coordinator/students?reg_no=${data.reg_no}`,
+        `${process.env.URL}/coordinator/students?reg_no=${data.reg_no}`,
         data
       );
       console.log(resp.data);

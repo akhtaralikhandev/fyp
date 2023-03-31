@@ -31,7 +31,7 @@ export const registerStudent = createAsyncThunk(
 );
 export const updateProject = createAsyncThunk("updateProject", async (data) => {
   const response = await axios.put(
-    `http://localhost:3000/api/project/update?projectId=${data.projectId}`,
+    `${process.env.URL}/project/update?projectId=${data.projectId}`,
     data
   );
   console.log(response);
@@ -41,7 +41,7 @@ export const fetchStudents = createAsyncThunk(
   "fetchStudents",
   async (reg_no) => {
     const resp = await axios.get(
-      `http://localhost:3000/api/student/student?reg_no=${reg_no}`,
+      `${process.env.URL}/student/student?reg_no=${reg_no}`,
       {
         reg_no: reg_no,
       }
@@ -52,19 +52,16 @@ export const fetchStudents = createAsyncThunk(
   }
 );
 export const fetProject = createAsyncThunk("fetchProject2", async (id) => {
-  const resp = await axios.get(`http://localhost:3000/api/project/id?id=${id}`);
+  const resp = await axios.get(`${process.env.URL}/project/id?id=${id}`);
   console.log("fetc project called from student slice");
   console.log(resp.data);
   return resp.data;
 });
 export const joinRequests = createAsyncThunk("joinRequest", async (data) => {
-  const resp = await axios.post(
-    `http://localhost:3000/api/project/joinRequest`,
-    {
-      reg_no: data.reg_no,
-      projectId: data.projectId,
-    }
-  );
+  const resp = await axios.post(`${process.env.URL}/project/joinRequest`, {
+    reg_no: data.reg_no,
+    projectId: data.projectId,
+  });
   console.log("join requests from student slice");
   console.log(resp);
   //   console.log(departement_name);
@@ -73,13 +70,10 @@ export const joinRequests = createAsyncThunk("joinRequest", async (data) => {
 export const undoJoinRequests = createAsyncThunk(
   "undoJoinRequest",
   async (requestId) => {
-    const resp = await axios.put(
-      `http://localhost:3000/api/project/joinRequest`,
-      {
-        id: requestId,
-        status: RequestStatus.REJECTED,
-      }
-    );
+    const resp = await axios.put(`${process.env.URL}/project/joinRequest`, {
+      id: requestId,
+      status: RequestStatus.REJECTED,
+    });
     console.log("join requests from student slice");
     console.log(resp);
     //   console.log(departement_name);
@@ -87,7 +81,7 @@ export const undoJoinRequests = createAsyncThunk(
   }
 );
 export const leaveGroup = createAsyncThunk("joinRequest", async (reg_no) => {
-  const resp = await axios.put(`http://localhost:3000/api/project/leave`, {
+  const resp = await axios.put(`${process.env.URL}/project/leave`, {
     reg_no: reg_no,
   });
   console.log(resp);
@@ -100,7 +94,7 @@ export const fetchJoinRequests = createAsyncThunk(
   "fetchJoinRequests",
   async (projectId) => {
     const resp = await axios.get(
-      `http://localhost:3000/api/project/joinRequest?projectId=${projectId}`
+      `${process.env.URL}/project/joinRequest?projectId=${projectId}`
     );
     console.log("fetchJoin Requests slice ");
     console.log(resp.data);
@@ -112,7 +106,7 @@ export const studentProjectApproval = createAsyncThunk(
   async (data) => {
     try {
       const resp = await axios.put(
-        `http://localhost:3000/api/project/joinRequest?reg_no=${data.reg_no}&projectId=${data.projectId}&id=${data.id}`,
+        `${process.env.URL}/project/joinRequest?reg_no=${data.reg_no}&projectId=${data.projectId}&id=${data.id}`,
         {
           projectId: data.projectId,
           status: data.status,
@@ -131,7 +125,7 @@ export const addStudentByAdminStudent = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const resp = await axios.put(
-        `http://localhost:3000/api/student/addStudent?reg_no=${data.reg_no}&projectId=${data.projectId}`,
+        `${process.env.URL}/student/addStudent?reg_no=${data.reg_no}&projectId=${data.projectId}`,
         data
       );
       console.log(resp.data);
@@ -148,7 +142,7 @@ export const removeStudentByAdminStudent = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const resp = await axios.put(
-        `http://localhost:3000/api/student/addStudent?reg_no=${data.reg_no}&projectId=${data.projectId}`,
+        `${process.env.URL}/student/addStudent?reg_no=${data.reg_no}&projectId=${data.projectId}`,
         data
       );
       console.log(resp.data);

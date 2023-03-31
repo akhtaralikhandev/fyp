@@ -11,7 +11,7 @@ export const fetchProjects = createAsyncThunk(
   "fetchProjects",
   async (supervisor_email) => {
     const resp = await axios.get(
-      `http://localhost:3000/api/supervisor/projectList?supervisor_email=${supervisor_email}`
+      `${process.env.URL}/supervisor/projectList?supervisor_email=${supervisor_email}`
     );
     console.log(resp);
     console.log(supervisor_email);
@@ -22,7 +22,7 @@ export const fetch_students_of_group = createAsyncThunk(
   "fetch_student",
   async (projectId) => {
     const resp = await axios.get(
-      `http://localhost:3000/api/coordinator/students?projectId=${projectId}`
+      `${process.env.URL}/coordinator/students?projectId=${projectId}`
     );
     console.log(projectId);
     console.log(resp);
@@ -34,7 +34,7 @@ export const handleProjectApproval = createAsyncThunk(
   async (data) => {
     try {
       const resp = await axios.put(
-        "http://localhost:3000/api/supervisor/projectList",
+        `${process.env.URL}/supervisor/projectList`,
         {
           id: data.projectId,
           status: data.status,
@@ -53,7 +53,7 @@ export const handleStudentRemoval = createAsyncThunk(
   async (reg_no) => {
     try {
       const resp = await axios.delete(
-        `http://localhost:3000/api/coordinator/students?reg_no=${reg_no}`
+        `${process.env.URL}/coordinator/students?reg_no=${reg_no}`
       );
       return resp.data;
     } catch (error) {
@@ -66,7 +66,7 @@ export const handleAddingStudent = createAsyncThunk(
   async (data) => {
     try {
       const resp = await axios.post(
-        `http://localhost:3000/api/coordinator/students?reg_no=${data.reg_no}`,
+        `${process.env.URL}/coordinator/students?reg_no=${data.reg_no}`,
         {
           projectId: data.projectId,
         }
@@ -83,7 +83,7 @@ export const handleEditingStudent = createAsyncThunk(
   async (data) => {
     try {
       const resp = await axios.put(
-        `http://localhost:3000/api/coordinator/students?reg_no=${data.reg_no}`,
+        `${process.env.URL}/coordinator/students?reg_no=${data.reg_no}`,
         {
           data,
         }

@@ -8,7 +8,7 @@ export const fetchEmployees = createAsyncThunk(
   "fetchEmployees",
   async (department) => {
     const resp = await axios.get(
-      `http://localhost:3000/api/presentation/employees?department=${department}`
+      `${process.env.URL}/presentation/employees?department=${department}`
     );
     console.log(resp.data);
     return resp.data;
@@ -18,7 +18,7 @@ export const createPresentation = createAsyncThunk(
   "createPresentation",
   async (data) => {
     const resp = await axios.post(
-      "http://localhost:3000/api/presentation/create",
+      `${process.env.URL}/presentation/create`,
       data
     );
     console.log(resp);

@@ -8,7 +8,7 @@ export const fetchDepartments = createAsyncThunk(
   "departments/fetch",
   async () => {
     const response = await axios.get(
-      "http://localhost:3000/api/departement/departement"
+      `${process.env.URL}/departement/departement`
     );
     console.log(response);
     return response.data;
@@ -18,7 +18,7 @@ export const updateDepartments = createAsyncThunk(
   "departments/update",
   async (value) => {
     const response = await axios.put(
-      "http://localhost:3000/api/departement/departement",
+      `${process.env.URL}/departement/departement`,
       value
     );
     console.log(response);
