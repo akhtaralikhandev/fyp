@@ -18,7 +18,7 @@ export const registerStudent = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const resp = await axios.post(
-        `https://6426af785d5fc106cddaf79d--delicate-gumption-e9b089.netlify.app/api/student/register`,
+        "https://6426af785d5fc106cddaf79d--delicate-gumption-e9b089.netlify.app/api/student/register",
         data
       );
       console.log(resp.data);
