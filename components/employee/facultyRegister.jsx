@@ -42,7 +42,7 @@ const Faculty_Register = () => {
         try {
           setLoading(true);
           const resp = await axios.post(
-            "http://localhost:3000/api/employee/employee",
+            "https://6426af785d5fc106cddaf79d--delicate-gumption-e9b089.netlify.app/api/employee/employee",
             values
           );
           router.push("/");
