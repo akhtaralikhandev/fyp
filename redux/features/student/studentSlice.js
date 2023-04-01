@@ -24,8 +24,7 @@ export const registerStudent = createAsyncThunk(
         {
           withCredentials: true,
           headers: {
-            "Access-Control-Allow-Origin":
-              "https://6427b674caa5da46ede9caf0--resonant-dolphin-61e8b3.netlify.app",
+            "Access-Control-Allow-Origin": `${process.env.URL2}`,
           },
         }
       );
