@@ -19,7 +19,11 @@ export const registerStudent = createAsyncThunk(
     try {
       const resp = await axios.post(
         `${process.env.URL}/student/register`,
-        data
+
+        data,
+        {
+          withCredentials: true,
+        }
       );
       console.log(resp.data);
       return resp.data;
