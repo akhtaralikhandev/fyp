@@ -14,7 +14,7 @@ const initialState = {
   addingStudentByStudentError: "",
 };
 export const registerStudent = createAsyncThunk(
-  "createPanels",
+  "createStudent",
   async (data, thunkAPI) => {
     try {
       const resp = await axios.post(
