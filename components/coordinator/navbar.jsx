@@ -1,54 +1,57 @@
 import { signOut } from "next-auth/react";
 import { useContext } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavbarContext } from "./navbarContext";
 import { useSession } from "next-auth/react";
 import { leaveGroup } from "../../redux/features/student/studentSlice";
+import { setRender } from "../../redux/features/coordinator/coordinator_slice";
+import Link from "next/link";
+import { useEffect } from "react";
+import Profile from "./home/profile";
 const Navbar = () => {
-  const { setRender } = useContext(NavbarContext);
+  const render = useSelector((state) => state.coordinator.render);
+  console.log(render);
+  console.log("this is render");
   const dispatch = useDispatch();
   const { data: session } = useSession();
-  const { reg_no } = session.user;
+  const reg_no = session?.user?.reg_no;
   console.log(reg_no);
   console.log(setRender);
   const handleLeaveGroup = () => {
     dispatch(leaveGroup(reg_no));
   };
+
   return (
-    <div className="navbar bg-slate-700 justify-between text-white items-center flex p-8  text-xl">
+    <div className="navbar fixed top-0 w-full  z-10 bg-blue-700 justify-between text-white items-center flex p-4 pl-8 pr-8  text-xl">
       <ul className="flex gap-14">
-        <li
-          onClick={() => setRender("All Projects")}
-          className=" cursor-pointer hover:text-gray-300 "
-        >
-          Projects List
-        </li>{" "}
-        <li
-          onClick={() => setRender("Supervised projects")}
-          className=" cursor-pointer hover:text-gray-300 "
-        >
-          Supervised projects
+        <li className="cursor-pointer hover:text-gray-300">
+          <Link href={"/"}>Home</Link>
         </li>
-        <li
-          onClick={() => setRender("Presentations")}
-          className=" cursor-pointer hover:text-gray-300 "
-        >
-          Presentations
+        <li className="cursor-pointer hover:text-gray-300">
+          <Link href={"/coordinator/profile"}>Profile</Link>
         </li>
-        <li
-          onClick={() => setRender("Panels")}
-          className=" cursor-pointer hover:text-gray-300 "
-        >
-          Panels
+        <li className="cursor-pointer hover:text-gray-300 ">
+          <Link href={"/coordinator/allProjects/allProjects"}>
+            All Projects
+          </Link>
+        </li>
+        <li className="cursor-pointer hover:text-gray-300 ">
+          <Link href={"/coordinator/supervision/supervision"}>
+            Projects Supervision
+          </Link>
+        </li>
+
+        <li className="cursor-pointer hover:text-gray-300 ">
+          <Link href={"/coordinator/presentations/allPresentation"}>
+            Presentations
+          </Link>
+        </li>
+        <li className="cursor-pointer hover:text-gray-300 ">
+          <Link href={"/coordinator/panel/allPanel"}>Panels</Link>
         </li>
       </ul>
       <div className="flex flex-col gap-2">
-        <button
-          className="  bg-slate-500 p-2 rounded-lg hover:text-black hover:bg-slate-300 right-12 top-8"
-          onClick={() => signOut()}
-        >
-          sign out
-        </button>
+        <Profile />
       </div>
     </div>
   );

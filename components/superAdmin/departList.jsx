@@ -4,6 +4,7 @@ import {
   fetchDepartments,
   updateDepartments,
 } from "../../redux/features/superAdmin/superAdminSlice";
+import List from "./list";
 
 const Depart_list = () => {
   const dispatch = useDispatch();
@@ -36,49 +37,21 @@ const Depart_list = () => {
 
   return (
     <div className="depart_list bg-slate-700 h-full">
-      <div className="depart_list_wrapper flex items-center justify-center gap-4 flex-col">
+      <div className="depart_list_wrapper flex items-center justify-center gap-6 flex-col">
+        <ul className="flex w-full gap-24   xl:pl-12 xl:pr-12  justify-between text-2xl text-white">
+          <li className="flex-1 items-center justify-center">Name</li>
+          <li className=" flex-1 items-center justify-center">
+            Coordinator Email
+          </li>
+          <li className=" text-center justify-center text-white p-2 rounded-lg cursor-pointer flex-1 items-center">
+            Edit
+          </li>
+          <li className="text-center justify-center text-white p-2 rounded-lg cursor-pointer flex-1 items-center">
+            Remove
+          </li>
+        </ul>
         {departements.map((x) => (
-          <ul className="flex  xl:w-1/2  justify-between text-2xl text-white">
-            <li>{x.name}</li>
-            <li>
-              {x.coordinator_email ? (
-                <span>{x.coordinator_email}</span>
-              ) : (
-                <div className="flex flex-col">
-                  <span
-                    className="cursor-pointer underline mb-2"
-                    onClick={() => handleAddClick(x.id)}
-                  >
-                    Add Coordinator{" "}
-                  </span>
-                  {departAddStates[x.id] ? (
-                    <div>
-                      <input
-                        className="p-2 outline-blue-500 rounded-lg text-black bg-white"
-                        placeholder="add coordinator email"
-                        value={coordinator_email}
-                        onChange={(e) => setCoordinator_email(e.target.value)}
-                      />
-                      <button
-                        onClick={() => handleUpdate(x)}
-                        className="bg-green-700 p-2 cursor-pointer rounded-lg"
-                      >
-                        submit
-                      </button>
-                      <button
-                        onClick={() => handleAddClick(x.id)}
-                        className="bg-red-600 p-2 cursor-pointer rounded-lg"
-                      >
-                        cancel
-                      </button>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-                </div>
-              )}
-            </li>
-          </ul>
+          <List x={x} />
         ))}
       </div>
     </div>

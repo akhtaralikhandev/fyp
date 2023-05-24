@@ -3,6 +3,8 @@ import { useState } from "react";
 const AddPresentation = () => {
   const [date, setDate] = useState("");
   const [venue, setVenue] = useState("");
+  console.log("this is the date");
+  console.log(date);
   return (
     <div className="addPresentation">
       <div className="addPresentation_wrapper">

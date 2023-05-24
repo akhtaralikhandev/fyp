@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.studentlist_tr:nth-child(even) {
-  background-color: rgb(181, 194, 207);
-}
 * {
   padding: 0%;
   margin: 0%;
@@ -21,4 +18,159 @@
 }
 .div_home_table_student {
   height: 100vh;
+}
+
+.panel {
+  display: flex;
+}
+.leftsidePanel {
+  flex: 1;
+
+  border-right: 1px solid gray;
+  height: 90vh;
+  padding: 8px;
+}
+.rightSidePanel {
+  flex: 7;
+}
+.allProjectsList2 {
+  padding-top: 100px;
+}
+.allPresentations {
+  padding-top: 100px;
+}
+.presentationLists {
+  display: flex;
+  flex-direction: column;
+}
+.allPresentationsLeft {
+  position: fixed;
+  top: 0;
+}
+.allPresentationsRight {
+  padding-left: 270px;
+}
+.allPresentionSidebar {
+  height: 90vh;
+
+  border: 1px solid gray;
+  border-top: 0px;
+}
+.panel {
+  display: flex;
+}
+.leftsidePanel {
+  flex: 1;
+}
+.rightSidePanel {
+  flex: 4;
+}
+.allPanelPageWrapper {
+  display: flex;
+}
+.coordinatorSidebar {
+  height: 90vh;
+  border-right: 1px solid gray;
+}
+
+/* .ulListoption {
+  position: absolute;
+  height: 300px;
+  overflow-y: scroll;
+} */
+.dropbtn {
+  color: white;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+/* Style the dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  width: 150px;
+  z-index: 1;
+}
+
+/* Show the dropdown content when the dropdown button is clicked */
+.dropdown.active .dropdown-content {
+  display: block;
+}
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 60px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -30px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.tooltip .fa-eye {
+  color: blue;
+}
+.tooltip .fa-trash {
+  color: rgb(197, 41, 41);
+}
+.tooltip .fa-edit {
+  color: green;
+}
+.presentationListTable {
+  overflow: auto;
+}
+.createPresentationLoading {
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60vw;
+}
+.rubricsNumber {
+  flex: 1;
+}
+.rubricsStatement {
+  flex: 3;
+}
+.allProjectsList2Left {
+  position: fixed;
+}
+.projectCardImg {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+/* .homeDashboardWrapper {
+  display: flex;
+}
+.leftHomeDashboard {
+  flex: 1;
+}
+.rightHomeDashboard {
+  flex: 2;
+} */
+.rotating-div {
+  transition: transform 0.3s ease-in-out;
+}
+
+.rotating-div:hover {
+  transform: rotate(2deg);
+}
+.studentRegisteration {
+  background-color: linear-gradient(to right, #e0f2f1, #f1f8e9);
 }

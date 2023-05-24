@@ -62,14 +62,15 @@ const ViewPanel = () => {
   }, [updatePanelError, dispatch]);
 
   return (
-    <div className="viewPanel">
+    <div className="viewPanel pl-32 pt-32">
       <div className="viewPanel_wrapper">
         <div className="flex flex-col relative">
           <div>
             <span>Panel Number : {panel2?.id}</span>
           </div>
-          <div className="flex items-center justify-center">
-            Employee Detail
+          <div className="flex items-center justify-center gap-4 flex-col">
+            <span className="text-3xl">Faculty Detail</span>
+            <span>Total Employees: {panel2?.Employees?.length}</span>
           </div>
           <span
             className="close absolute right-10 bg-red-600 text-white rounded-lg p-2  cursor-pointer"
@@ -83,26 +84,28 @@ const ViewPanel = () => {
             Close
           </span>
         </div>
-        <table className="table  mt-8 bg-slate-200 w-full   border-collapse border-slate-500  ">
+        <table className="table  mt-8  w-full   border-collapse border-slate-500  ">
           <tbody>
-            <tr className="bg-slate-600  border-blue-500 text-3xl text-white">
-              <th className="border text-center p-2">Email</th>
-              <th className="border text-center p-2">name</th>
-              <th className="border text-center p-2">contact no</th>
-              <th className="border text-center p-2">Remove</th>
+            <tr className="  border-blue-500e text-2xl">
+              <th className="border border-gray-500 text-center p-2">Email</th>
+              <th className="border border-gray-500 text-center p-2">name</th>
+              <th className="border border-gray-500 text-center p-2">
+                contact no
+              </th>
+              <th className="border border-gray-500 text-center p-2">Remove</th>
             </tr>
             {panel2?.Employees?.map((x) => (
               <tr className="studentlist_tr text-black">
-                <td className="border  cursor-pointer text-center p-2">
+                <td className="border border-gray-500  cursor-pointer text-center p-2">
                   {x?.email}
                 </td>
-                <td className="border  cursor-pointer text-center p-2">
+                <td className="border border-gray-500  cursor-pointer text-center p-2">
                   {x?.name}
                 </td>
-                <td className="border  cursor-pointer text-center p-2">
+                <td className="border border-gray-500 cursor-pointer text-center p-2">
                   {x?.contact_no}
                 </td>
-                <td className="border flex gap-4 items-center justify-center cursor-pointer text-center p-2">
+                <td className="border border-gray-500 flex gap-4 items-center justify-center cursor-pointer text-center p-2">
                   <DeleteConfirmation email={x?.email} id={panel2?.id} />
                 </td>
               </tr>
@@ -131,41 +134,51 @@ const ViewPanel = () => {
           {" "}
           <span>Project Details</span>
         </div>
-        <table className="table  mt-8 bg-slate-200 w-full   border-collapse border-slate-500  ">
+        <table className="table  mt-8  w-full   border-collapse border-slate-500  ">
           <tbody>
-            <tr className="bg-slate-600  border-blue-500 text-3xl text-white">
-              <th className="border text-center p-2">Project Id</th>
-              <th className="border text-center p-2">Title</th>
-              <th className="border text-center p-2">Admin Student</th>
-              <th className="border text-center p-2">
-                Presentation Date and Time
+            <tr className="border-2  border-blue-500 text-xl ">
+              <th className="border text-center border-gray-500 p-2">
+                Project Id
               </th>
-              <th className="border text-center p-2"> Presentation Venue</th>
+              <th className="border text-center border-gray-500 p-2">Title</th>
+              <th className="border text-center border-gray-500 brode p-2">
+                Admin Student
+              </th>
+              <th className="border text-center border-gray-500 p-2">
+                Completed Presentations
+              </th>
+              <th className="border text-center p-2">
+                Remaining Presentations
+              </th>
             </tr>
+
             {panel2?.projects?.map((x) => (
-              <tr className="studentlist_tr text-black">
-                <td className="border  cursor-pointer text-center p-2">
-                  {x.id}
-                </td>
-                <td className="border  cursor-pointer text-center p-2">
-                  {x.title}
-                </td>
-                <td className="border  cursor-pointer text-center p-2">
-                  {x.admin_student_email}
-                </td>
-                {x?.Presentation_Scedule?.date ? (
-                  <>
-                    <td className="border  cursor-pointer text-center p-2">
-                      {x.Presentation_Scedule.date}
-                    </td>
-                    <td className="border  cursor-pointer text-center p-2">
-                      {x.Presentation_Scedule.venue}
-                    </td>{" "}
-                  </>
-                ) : (
-                  <span>Add Presentation </span>
-                )}
-              </tr>
+              <>
+                <tr className="studentlist_tr text-black">
+                  <td className="border border-gray-500  cursor-pointer text-center p-2">
+                    {x.id}
+                  </td>
+                  <td className="border border-gray-500  cursor-pointer text-center p-2">
+                    {x.title}
+                  </td>
+                  <td className="border border-gray-500  cursor-pointer text-center p-2">
+                    {x.admin_student_email}
+                  </td>
+                  {x?.Presentation_Scedule?.date ? (
+                    <>
+                      <td className="border border-gray-500  cursor-pointer text-center p-2">
+                        {x.Presentation_Scedule.date}
+                      </td>
+                      <td className="border  border-gray-500 cursor-pointer text-center p-2">
+                        {x.Presentation_Scedule.venue}
+                      </td>{" "}
+                    </>
+                  ) : (
+                    <span>Add Presentation </span>
+                  )}
+                </tr>
+                <span>View Presentations</span>{" "}
+              </>
             ))}
           </tbody>
         </table>{" "}

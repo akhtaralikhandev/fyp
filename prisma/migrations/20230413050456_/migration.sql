@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Rubrics" ALTER COLUMN "marks" DROP NOT NULL,
+ALTER COLUMN "evaluator" DROP NOT NULL;

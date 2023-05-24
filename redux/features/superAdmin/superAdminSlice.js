@@ -4,12 +4,11 @@ import axios from "axios";
 const initialState = {
   departments: [],
 };
+const URL = "http://localhost:3000/api";
 export const fetchDepartments = createAsyncThunk(
   "departments/fetch",
   async () => {
-    const response = await axios.get(
-      `${process.env.URL}/departement/departement`
-    );
+    const response = await axios.get(`${URL}/departement/departement`);
     console.log(response);
     return response.data;
   }
@@ -17,10 +16,7 @@ export const fetchDepartments = createAsyncThunk(
 export const updateDepartments = createAsyncThunk(
   "departments/update",
   async (value) => {
-    const response = await axios.put(
-      `${process.env.URL}/departement/departement`,
-      value
-    );
+    const response = await axios.put(`${URL}/departement/departement`, value);
     console.log(response);
     return response.data;
   }

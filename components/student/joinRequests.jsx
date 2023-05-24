@@ -16,7 +16,9 @@ const JoinRequest = ({ data }) => {
   const studentRequest2 = useSelector(
     (state) => state.student?.projects?.student_request
   );
-  const studentRequest = studentRequest2.filter((x) => x.status !== "ACCEPTED");
+  const studentRequest = studentRequest2?.filter(
+    (x) => x.status !== "ACCEPTED"
+  );
 
   console.log("this is student Requests");
   console.log(studentRequest);

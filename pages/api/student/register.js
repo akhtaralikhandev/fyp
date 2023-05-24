@@ -1,14 +1,11 @@
 import { mailOption, transporter } from "../../../config/nodemailer";
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
-import cors from "cors"; // import cors middleware
-const prisma = new PrismaClient();
 
-const corsMiddleware = cors(); // create a new cors middleware instance
+const prisma = new PrismaClient();
 
 const registrationHandler = async (req, res) => {
   // use cors middleware
-  await corsMiddleware(req, res);
 
   if (req.method === "POST") {
     try {

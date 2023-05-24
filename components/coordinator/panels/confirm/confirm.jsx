@@ -22,10 +22,10 @@ const DeleteConfirmation = ({ postId, onDelete, id, email }) => {
   return (
     <>
       <button
-        className=" bg-green-800 text-white p-2 rounded-lg cursor-pointer hover:bg-green-600"
+        className="  text-red-600 text-3xl p-2 rounded-lg cursor-pointer"
         onClick={() => setShowConfirmation(true)}
       >
-        Remove Student
+        <i class="fa fa-trash" aria-hidden="true"></i>
       </button>
       {showConfirmation && (
         <div className="fixed inset-0 z-10 flex items-center justify-center">

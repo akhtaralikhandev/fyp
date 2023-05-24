@@ -154,112 +154,134 @@ const CreateOrJoinGroup = () => {
     dispatch(fetchStudents(reg_no));
   }, []);
   return (
-    <div className="createOrJoinGroup bg-slate-800">
-      <div className="createOrJoin_wrapper  pt-12 flex  justify-center xl:pl-24  gap-4 flex-col">
-        <div className="flex gap-8 ">
-          <span
-            className="bg-slate-700 rounded-xl hover:bg-slate-500 text-white cursor-pointer p-2"
-            onClick={() => setJoin(true)}
-          >
-            Join Group
-          </span>
-          <span
-            className="bg-slate-700 hover:bg-slate-500 rounded-xl cursor-pointer text-white p-2"
-            onClick={() => setJoin(false)}
-          >
-            Create Group
-          </span>
+    <div className="createOrJoinGroup">
+      <div className="createOrJoin_wrapper  flex  justify-center   gap-4 flex-col">
+        <div className="flex gap-8 justify-between p-4 xl:pl-24 xl:pr-24 bg-gray-700 items-center">
+          <div className="left flex gap-4">
+            {" "}
+            <span
+              className=" hover:bg-green-700 rounded-lg text-white cursor-pointer p-2"
+              onClick={() => setJoin(true)}
+            >
+              Join Group
+            </span>
+            <span
+              className=" hover:bg-green-700 rounded-lg text-white cursor-pointer p-2"
+              onClick={() => setJoin(false)}
+            >
+              Create Group
+            </span>
+          </div>
+          <div className="right">
+            <button
+              className=" bg-green-700 text-white hover:bg-green-500  p-2 rounded-lg "
+              onClick={() => signOut()}
+            >
+              sign out
+            </button>
+          </div>
         </div>
         {join ? (
-          <div className="flex flex-col gap-4 ">
-            <input
-              value={joinCode}
-              placeholder="group code"
-              className=" border-2 p-2  outline-blue-600 rounded-xl"
-              onChange={(e) => setJoinCode(e.target.value)}
-            />
+          <>
+            {projects.length > 0 ? (
+              <div className="flex flex-col gap-4 ">
+                <input
+                  value={joinCode}
+                  placeholder="group code"
+                  className=" border-2 p-2  outline-blue-600 rounded-xl"
+                  onChange={(e) => setJoinCode(e.target.value)}
+                />
 
-            <button
-              onClick={(e) => handleSubmit_2(e)}
-              className="bg-slate-700 p-2 rounded-xl w-1/4 hover:bg-slate-500 text-white"
-            >
-              Submit
-            </button>
-            <table className="table mt-8 bg-slate-200    border-collapse border-slate-500 w-full ">
-              <tbody>
-                <tr className="bg-slate-600  border-blue-500 text-3xl text-white">
-                  <th className="border text-center p-2">Group Id</th>
-                  <th className="border text-center p-2">Title</th>
-                  <th className="border text-center p-2">Supervisor Email</th>
-                  <th className="border text-center p-2">Total Students</th>
-                  <th className="border text-center p-2">Join Request</th>
-                </tr>
-                {projects?.map((x) => {
-                  // console.log(isRequested);
-                  return (
-                    <tr className="studentlist_tr text-black">
-                      <td className="border  cursor-pointer text-center  text-xl p-2">
-                        {x.id}
-                      </td>
-                      <td className="border  cursor-pointer text-center p-2">
-                        {x.title}
-                      </td>
-                      <td className="border  cursor-pointer text-center p-2">
-                        {x?.employee[0]?.employee_email
-                          ? x?.employee[0]?.employee_email
-                          : "empty for now"}
-                      </td>
-                      <td className="border  cursor-pointer text-center p-2">
-                        {x?.students.length}
-                      </td>
-                      <td className="border   text-center p-2">
-                        {ProjectJoiningRequest?.some(
-                          (req) => req?.projectId === x?.id
-                        ) ? (
-                          <button
-                            className="bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-500  cursor-pointer"
-                            onClick={() => {
-                              const requestId = ProjectJoiningRequest.find(
-                                (req) => req?.projectId === x.id
-                              ).id;
-                              console.log(requestId);
-                              dispatch(undoJoinRequests(requestId));
-                            }}
-                          >
-                            Request sent
-                          </button>
-                        ) : (
-                          <button
-                            className="bg-green-700 text-white p-2 rounded-lg cursor-pointer"
-                            onClick={() => {
-                              console.log(x.id);
-                              console.log("called once ");
-                              createRequest(x.id);
-                            }}
-                          >
-                            Send Request
-                          </button>
-                        )}
-                      </td>
+                <button
+                  onClick={(e) => handleSubmit_2(e)}
+                  className="bg-slate-700 p-2 rounded-xl w-1/4 hover:bg-slate-500 text-white"
+                >
+                  Submit
+                </button>
+
+                <table className="table mt-8 bg-slate-200    border-collapse border-slate-500 w-full ">
+                  <tbody>
+                    <tr className="bg-slate-600  border-blue-500 text-3xl text-white">
+                      <th className="border text-center p-2">Group Id</th>
+                      <th className="border text-center p-2">Title</th>
+                      <th className="border text-center p-2">
+                        Supervisor Email
+                      </th>
+                      <th className="border text-center p-2">Total Students</th>
+                      <th className="border text-center p-2">Join Request</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                    {projects?.map((x) => {
+                      // console.log(isRequested);
+                      return (
+                        <tr className="studentlist_tr text-black">
+                          <td className="border  cursor-pointer text-center  text-xl p-2">
+                            {x.id}
+                          </td>
+                          <td className="border  cursor-pointer text-center p-2">
+                            {x.title}
+                          </td>
+                          <td className="border  cursor-pointer text-center p-2">
+                            {x?.employee[0]?.employee_email
+                              ? x?.employee[0]?.employee_email
+                              : "empty for now"}
+                          </td>
+                          <td className="border  cursor-pointer text-center p-2">
+                            {x?.students.length}
+                          </td>
+                          <td className="border   text-center p-2">
+                            {ProjectJoiningRequest?.some(
+                              (req) => req?.projectId === x?.id
+                            ) ? (
+                              <button
+                                className="bg-blue-700 text-white p-2 rounded-lg hover:bg-blue-500  cursor-pointer"
+                                onClick={() => {
+                                  const requestId = ProjectJoiningRequest.find(
+                                    (req) => req?.projectId === x.id
+                                  ).id;
+                                  console.log(requestId);
+                                  dispatch(undoJoinRequests(requestId));
+                                }}
+                              >
+                                Request sent
+                              </button>
+                            ) : (
+                              <button
+                                className="bg-green-700 text-white p-2 rounded-lg cursor-pointer"
+                                onClick={() => {
+                                  console.log(x.id);
+                                  console.log("called once ");
+                                  createRequest(x.id);
+                                }}
+                              >
+                                Send Request
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <span className="text-3xl flex items-center justify-center">
+                No Projects available Plz Create One
+              </span>
+            )}
+          </>
         ) : (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 p-8">
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="project title"
-              className=" border-2 p-2 w-96 outline-blue-600 rounded-xl"
+              className=" border-2 border-black p-2 w-96 outline-blue-600 rounded-xl"
             />{" "}
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="write description"
-              className=" border-2 p-2 resize-none  outline-blue-600 rounded-xl"
+              className=" border-2 border-black p-2 resize-none  outline-blue-600 rounded-xl"
               cols={10}
               rows={10}
             />
@@ -268,19 +290,19 @@ const CreateOrJoinGroup = () => {
               defaultValue={EmployeeRole.ADVISOR}
               onChange={(e) => setSupervisor_email(e.target.value)}
               placeholder="Supervisor email"
-              className=" border-2 p-2 w-96 outline-blue-600 rounded-xl"
+              className=" border-2 border-black p-2 w-96 outline-blue-600 rounded-xl"
             />
             <input
               value={coSuperVisor_email}
               onChange={(e) => setCoSupervisor_email(e.target.value)}
               placeholder="Co-Supervisor email"
-              className=" border-2 p-2 w-96 outline-blue-600 rounded-xl"
+              className="border-black border-2 p-2 w-96 outline-blue-600 rounded-xl"
               defaultValue={EmployeeRole.CO_ADVISOR}
             />
             <select
               id="department_name"
               name="department_name"
-              className="p-3 outline-blue-500"
+              className="p-3 border-2 xl:w-64 border-black outline-blue-500"
               defaultValue={"FME"}
               value={department_name}
               onChange={(e) => setDepartment_name(e.target.value)}
@@ -362,12 +384,6 @@ const CreateOrJoinGroup = () => {
           </div>
         )}
       </div>
-      <button
-        className="absolute bg-green-700 text-white hover:bg-green-500 top-5  p-2 rounded-lg right-5"
-        onClick={() => signOut()}
-      >
-        sign out
-      </button>
     </div>
   );
 };

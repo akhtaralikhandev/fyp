@@ -85,7 +85,7 @@ const handler = async (req, res) => {
           return res.status(200).json(superVisedProject);
         }
 
-        res.status(200).json({ project: project, request: request });
+        res.status(200).json({ project: project });
       } else {
         return res.status(404).json("No student found with that email");
       }

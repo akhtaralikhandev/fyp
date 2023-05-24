@@ -11,6 +11,8 @@ import superAdminReducer from "../features/superAdmin/superAdminSlice";
 import presentationReducer from "../features/presentations/presentationSlice";
 import panelReducer from "../features/panel/panelSlice";
 import employeeReducer from "../features/employee/employeeSlice";
+import coordPresentationReducer from "../features/coordinator/coordPresentationSlice";
+
 export const signOut2 = createAction("user/signOut");
 
 const rootReducer = combineReducers({
@@ -23,6 +25,7 @@ const rootReducer = combineReducers({
   presentation: presentationReducer,
   panel: panelReducer,
   employee: employeeReducer,
+  coordPresentation: coordPresentationReducer,
 });
 const persistConfig = {
   key: "root",

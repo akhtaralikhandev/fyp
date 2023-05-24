@@ -33,7 +33,7 @@ const SuperVisedProjectsRequests = () => {
   console.log(projects);
   console.log(email);
   return (
-    <div className="supervisedProjects bg-slate-700 text-white">
+    <div className="supervisedProjects text-black">
       <div className="superVisedProjects_wrapper">
         {filteredEmployees.map((x) => (
           <ul className="flex gap-4 items-center justify-center">

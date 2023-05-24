@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchEmployee } from "../../../redux/features/employee/employeeSlice";
 const Panel = () => {
   const { data: session } = useSession();
-  const { email } = session?.user;
+  const email = session?.user?.email;
   const dispatch = useDispatch();
   const employee = useSelector((state) => state.employee.employee);
   const panel2 = useSelector((state) => state.employee.employee?.Panel);

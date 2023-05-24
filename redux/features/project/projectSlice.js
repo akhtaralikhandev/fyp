@@ -3,7 +3,9 @@ import axios from "axios";
 
 const initialState = {
   project: [],
+  allProjects: [],
 };
+const URL = "http://localhost:3000/api";
 export const fetchProject = createAsyncThunk(
   "fetchProject",
   async (projectId) => {
@@ -12,6 +14,22 @@ export const fetchProject = createAsyncThunk(
     );
     console.log(response);
     return response.data;
+  }
+);
+export const fetchAllProjects = createAsyncThunk(
+  "fetchAllProjects",
+  async (department_name, thunkAPI) => {
+    try {
+      const resp = await axios.get(
+        `${URL}/project/all?department_name=${department_name}`
+      );
+      console.log("this is from project slice ok done ");
+      console.log(resp.data);
+      return resp.data;
+    } catch (error) {
+      console.error(error);
+      return thunkAPI.rejectWithValue(error.response.data); // pass the error response data to the rejected state
+    }
   }
 );
 export const updateProject = createAsyncThunk("updateProject", async (data) => {
@@ -34,6 +52,9 @@ const projectSlice = createSlice({
       })
       .addCase(updateProject.fulfilled, (state, action) => {
         state.project = action.payload;
+      })
+      .addCase(fetchAllProjects.fulfilled, (state, action) => {
+        state.allProjects = action.payload;
       });
   },
 });

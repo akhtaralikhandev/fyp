@@ -26,9 +26,11 @@ const handler = async (req, res) => {
           },
           employees: true,
           employee: true,
+
           projects: {
             include: {
               employee: true,
+
               Panel: true,
               Presentation_Scedule: true,
               students: true,

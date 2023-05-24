@@ -64,25 +64,24 @@ model Student {
 }
 
 model Project {
-  id                     Int                            @id @default(autoincrement())
-  title                  String
-  description            String
-  status                 ProjectStatus                  @default(PENDING)
-  department             Department                     @relation(fields: [department_name], references: [name])
-  department_name        String
-  students               Student[]
-  employee               Employee_Project[]
-  attributes             Boolean                        @default(false)
-  SDG                    Boolean                        @default(false)
-  supervisor_accepted    Boolean                        @default(false)
-  coSupervisor_accepted  Boolean                        @default(false)
-  admin_student_email    String?
-  admin_student          Student?                       @relation("admin_student", fields: [admin_student_email], references: [email])
-  student_request        StudentProjectJoiningRequest[]
-  panelNumber            Int?
-  Panel                  Panel?                         @relation(fields: [panelNumber], references: [id])
-  Presentation_Scedule   Presentation_Scedule?          @relation(fields: [presentation_SceduleId], references: [id])
-  presentation_SceduleId Int?
+  id                    Int                            @id @default(autoincrement())
+  title                 String
+  description           String
+  status                ProjectStatus                  @default(PENDING)
+  department            Department                     @relation(fields: [department_name], references: [name])
+  department_name       String
+  students              Student[]
+  employee              Employee_Project[]
+  attributes            Boolean                        @default(false)
+  SDG                   Boolean                        @default(false)
+  supervisor_accepted   Boolean                        @default(false)
+  coSupervisor_accepted Boolean                        @default(false)
+  admin_student_email   String?
+  admin_student         Student?                       @relation("admin_student", fields: [admin_student_email], references: [email])
+  student_request       StudentProjectJoiningRequest[]
+  panelNumber           Int?
+  Panel                 Panel?                         @relation(fields: [panelNumber], references: [id])
+  Presentation_Scedule  Presentation_Scedule[]
 }
 
 model VerificationToken {
@@ -123,23 +122,24 @@ model Panel {
 model Rubrics {
   id                     Int                   @unique @default(autoincrement())
   statement              String
-  marks                  Int
+  marks                  Int?
   Presentation_Scedule   Presentation_Scedule? @relation(fields: [presentation_SceduleId], references: [id])
   presentation_SceduleId Int?
-  evaluator              String
+  evaluator              String?
 }
 
 model Presentation_Scedule {
-  id                  Int       @unique @default(autoincrement())
-  Presentation_number Int       @default(autoincrement())
+  id                  Int                @unique @default(autoincrement())
+  Presentation_number Int
+  title               String
   date                DateTime
   venue               String
   Start_time          DateTime?
   End_time            DateTime?
   Rubrics             Rubrics[]
-
-  projects Project[]
-  status   PresentationStatus @default(PENDING)
+  projectId           Int
+  Project             Project            @relation(fields: [projectId], references: [id])
+  status              PresentationStatus @default(PENDING)
 }
 
 enum ProjectStatus {

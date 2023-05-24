@@ -9,7 +9,7 @@ const ProjectList = ({ onDelete, project, onSubmit, onEdit }) => {
   const { editRegNo, setEditRegNo } = useContext(StudentGroupContext);
   const dispatch = useDispatch();
   const groupLeader = (email) => {
-    return project.students.find((x) => x.email === email);
+    return project?.students?.find((x) => x?.email === email);
   };
   const handleClick = (id) => {
     dispatch(setProjectId(id));
@@ -18,19 +18,19 @@ const ProjectList = ({ onDelete, project, onSubmit, onEdit }) => {
   console.log(groupLeader);
   return (
     <tr className="studentlist_tr text-black">
-      <td className="border  cursor-pointer text-center p-2">{project.id}</td>
+      <td className="border  cursor-pointer text-center p-2">{project?.id}</td>
       <td className="border  cursor-pointer text-center p-2">
-        {project.title}
+        {project?.title}
       </td>
       <td className="border  cursor-pointer text-center p-2">
-        {groupLeader(project.admin_student_email)?.name}
+        {groupLeader(project?.admin_student_email)?.name}
       </td>
       <td className="border  cursor-pointer text-center p-2">
-        {project.students.length}
+        {project?.students?.length}
       </td>
       <td className="border flex gap-4 items-center justify-center cursor-pointer text-center p-2">
         <span
-          onClick={() => handleClick(project.id)}
+          onClick={() => handleClick(project?.id)}
           className="bg-green-700 p-2 rounded-lg text-white cursor-pointer"
         >
           view more

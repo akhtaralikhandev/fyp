@@ -20,7 +20,7 @@ const AddProject = ({ projects, id }) => {
     setAddProjectId(selectedProject);
   };
   return (
-    <div className="flex flex-col gap-2 w-1/3 mt-4  items-start justify-start">
+    <div className="flex flex-col mt-4 gap-2 w-1/3  items-center justify-start">
       <select value={addProjectId} onChange={handleEmployeeSelect}>
         <option value="">Select Project</option>
         {projects.map((x) => (

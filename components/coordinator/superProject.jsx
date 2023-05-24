@@ -1,11 +1,12 @@
 import { useSession } from "next-auth/react";
 import { useSelector, useDispatch } from "react-redux";
 import { AcceptOrRejectSupervisingRequest } from "../../redux/features/coordinator/coordinator_slice";
+import Navbar from "./navbar";
 
 const SuperVisedProject = () => {
   const { data: session } = useSession();
   const dispatch = useDispatch();
-  const { email } = session.user;
+  const email = session?.user?.email;
   const projects = useSelector((state) => state.coordinator.projects.projects);
   console.log(projects);
   function filterEmployeesByEmail(email) {
@@ -33,15 +34,15 @@ const SuperVisedProject = () => {
   return (
     <div className="superVisedProjects">
       <div className="superVisedProject_wrapper">
-        <div className="flex  items-center text-4xl  m-4  justify-center">
-          {" "}
+        <Navbar />
+        <div className="flex  items-center text-4xl  pb-24  justify-center">
           Projects Under My Supervision{" "}
         </div>
         {filteredEmployees.length > 0 ? (
           <table className="table  mt-8 bg-slate-200 w-full   border-collapse border-slate-500  ">
             <tbody>
               <tr className="bg-slate-600  border-blue-500 text-3xl text-white">
-                <th className="border text-center p-2">Project Id</th>
+                <th className="border text-center p-2">Presentation</th>
                 <th className="border text-center p-2">My Role</th>
                 <th className="border text-center p-2">Status</th>
                 <th className="border text-center p-2">view more</th>

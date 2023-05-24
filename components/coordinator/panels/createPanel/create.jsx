@@ -36,6 +36,8 @@ const CreatePanel = () => {
   const projectsWithNullPanelNumber = projects?.filter(
     (project) => project.panelNumber === null
   );
+  console.log("these are the projects with null panel number");
+  console.log(projectsWithNullPanelNumber);
   const allEmployees = useSelector(
     (state) => state.coordinator.projects.employee
   );
@@ -74,8 +76,8 @@ const CreatePanel = () => {
   }, [PanelCreationError, dispatch]);
 
   return (
-    <div className="createPanel">
-      <div className="createPanelWrapper">
+    <div className="createPanel  w-full">
+      <div className="createPanelWrapper mt-24">
         {PanelCreationError && (
           <div>
             <span className="text-red-500 ">
@@ -88,10 +90,10 @@ const CreatePanel = () => {
             ))}
           </div>
         )}{" "}
-        <div className="left_side_panel  gap-8 flex flex-col items-center justify-center">
+        <div className="left_side_panel w-full gap-8 flex flex-col items-center justify-center">
           <span className="text-4xl italic ">create panel </span>
-          <div className="flex gap-8 flex-col">
-            <div className="flex gap-4">
+          <div className="flex gap-8 flex-col items-center w-full justify-center">
+            <div className="flex gap-8 w-full flex-col items-center justify-center p-4">
               <MultiSelect
                 options={allEmployees}
                 value={employee}
@@ -106,7 +108,7 @@ const CreatePanel = () => {
               />
             </div>
             <button
-              className="bg-blue-700 hover:bg-blue-500 text-white p-2 rounded-lg"
+              className="bg-blue-700 mr-2 w-1/5 hover:bg-blue-500 text-white p-2 rounded-lg"
               onClick={(e) => handleSubmit(e)}
             >
               Submit

@@ -32,12 +32,12 @@ const handler = async (req, res) => {
           panelNumber: {
             not: null,
           },
-          email: {
-            in: emails,
+          id: {
+            in: projects,
           },
         },
         select: {
-          email: true,
+          id: true,
         },
       });
       if (assignedProjects.length > 0) {
@@ -166,6 +166,7 @@ const handler = async (req, res) => {
     }
   } else if (req.method === "GET") {
     const { department_name } = req.query;
+    console.log(department_name);
     try {
       const panels = await prisma.panel.findMany({
         where: {
@@ -177,6 +178,7 @@ const handler = async (req, res) => {
         },
         include: {
           Employees: true,
+
           projects: {
             include: {
               employee: {
@@ -189,7 +191,13 @@ const handler = async (req, res) => {
           },
         },
       });
-
+      const students = await prisma.student.findMany({
+        where: {
+          project: {
+            panelNumber: {},
+          },
+        },
+      });
       const panelsWithCounts = panels.map((panel) => {
         return {
           ...panel,

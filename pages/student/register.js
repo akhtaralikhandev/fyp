@@ -1,9 +1,10 @@
-import Register from "../../components/student/register";
-const Register2 = () => {
+import { StudentRegister } from "../../components/student/register";
+
+const Register = () => {
   return (
     <>
-      <Register />
+      <StudentRegister />
     </>
   );
 };
-export default Register2;
+export default Register;

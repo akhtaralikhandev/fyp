@@ -12,19 +12,22 @@ const initialState = {
   studentRegisterSuccess: "",
   studentRegisterFailure: "",
   addingStudentByStudentError: "",
+  login: false,
+  registerStudentPending: false,
 };
+const URL = "http://localhost:3000/api";
 export const registerStudent = createAsyncThunk(
   "createStudent",
   async (data, thunkAPI) => {
     try {
       const resp = await axios.post(
-        `${process.env.URL}/student/register`,
+        `http://localhost:3000/api/student/register`,
 
         data,
         {
           withCredentials: true,
           headers: {
-            "Access-Control-Allow-Origin": `${process.env.URL2}`,
+            "Access-Control-Allow-Origin": `${URL}`,
           },
         }
       );
@@ -38,7 +41,7 @@ export const registerStudent = createAsyncThunk(
 );
 export const updateProject = createAsyncThunk("updateProject", async (data) => {
   const response = await axios.put(
-    `${process.env.URL}/project/update?projectId=${data.projectId}`,
+    `http://localhost:3000/api/project/update?projectId=${data.projectId}`,
     data
   );
   console.log(response);
@@ -47,25 +50,22 @@ export const updateProject = createAsyncThunk("updateProject", async (data) => {
 export const fetchStudents = createAsyncThunk(
   "fetchStudents",
   async (reg_no) => {
-    const resp = await axios.get(
-      `${process.env.URL}/student/student?reg_no=${reg_no}`,
-      {
-        reg_no: reg_no,
-      }
-    );
+    const resp = await axios.get(`${URL}/student/student?reg_no=${reg_no}`, {
+      reg_no: reg_no,
+    });
     console.log(resp);
     console.log("fetch students from student slice");
     return resp.data;
   }
 );
 export const fetProject = createAsyncThunk("fetchProject2", async (id) => {
-  const resp = await axios.get(`${process.env.URL}/project/id?id=${id}`);
+  const resp = await axios.get(`${URL}/project/id?id=${id}`);
   console.log("fetc project called from student slice");
   console.log(resp.data);
   return resp.data;
 });
 export const joinRequests = createAsyncThunk("joinRequest", async (data) => {
-  const resp = await axios.post(`${process.env.URL}/project/joinRequest`, {
+  const resp = await axios.post(`${URL}/project/joinRequest`, {
     reg_no: data.reg_no,
     projectId: data.projectId,
   });
@@ -77,7 +77,7 @@ export const joinRequests = createAsyncThunk("joinRequest", async (data) => {
 export const undoJoinRequests = createAsyncThunk(
   "undoJoinRequest",
   async (requestId) => {
-    const resp = await axios.put(`${process.env.URL}/project/joinRequest`, {
+    const resp = await axios.put(`${URL}/project/joinRequest`, {
       id: requestId,
       status: RequestStatus.REJECTED,
     });
@@ -88,7 +88,7 @@ export const undoJoinRequests = createAsyncThunk(
   }
 );
 export const leaveGroup = createAsyncThunk("joinRequest", async (reg_no) => {
-  const resp = await axios.put(`${process.env.URL}/project/leave`, {
+  const resp = await axios.put(`${URL}/project/leave`, {
     reg_no: reg_no,
   });
   console.log(resp);
@@ -101,7 +101,7 @@ export const fetchJoinRequests = createAsyncThunk(
   "fetchJoinRequests",
   async (projectId) => {
     const resp = await axios.get(
-      `${process.env.URL}/project/joinRequest?projectId=${projectId}`
+      `${URL}/project/joinRequest?projectId=${projectId}`
     );
     console.log("fetchJoin Requests slice ");
     console.log(resp.data);
@@ -113,7 +113,7 @@ export const studentProjectApproval = createAsyncThunk(
   async (data) => {
     try {
       const resp = await axios.put(
-        `${process.env.URL}/project/joinRequest?reg_no=${data.reg_no}&projectId=${data.projectId}&id=${data.id}`,
+        `${URL}/project/joinRequest?reg_no=${data.reg_no}&projectId=${data.projectId}&id=${data.id}`,
         {
           projectId: data.projectId,
           status: data.status,
@@ -132,7 +132,7 @@ export const addStudentByAdminStudent = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const resp = await axios.put(
-        `${process.env.URL}/student/addStudent?reg_no=${data.reg_no}&projectId=${data.projectId}`,
+        `http://localhost:3000/api/student/addStudent?reg_no=${data.reg_no}&projectId=${data.projectId}`,
         data
       );
       console.log(resp.data);
@@ -149,7 +149,7 @@ export const removeStudentByAdminStudent = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const resp = await axios.put(
-        `${process.env.URL}/student/addStudent?reg_no=${data.reg_no}&projectId=${data.projectId}`,
+        `${URL}/student/addStudent?reg_no=${data.reg_no}&projectId=${data.projectId}`,
         data
       );
       console.log(resp.data);
@@ -165,6 +165,9 @@ const studentSlice = createSlice({
   name: "student",
   initialState,
   reducers: {
+    gotoLogin2: (state, action) => {
+      state.login = false;
+    },
     HavingProject: (state, action) => {
       state.havingProject = action.payload;
     },
@@ -207,9 +210,15 @@ const studentSlice = createSlice({
       })
       .addCase(registerStudent.fulfilled, (state, action) => {
         state.studentRegisterSuccess = "Account Created Plz very your email";
+        state.login = true;
+        state.registerStudentPending = false;
       })
       .addCase(registerStudent.rejected, (state, action) => {
         state.studentRegisterFailure = action.payload;
+        state.registerStudentPending = false;
+      })
+      .addCase(registerStudent.pending, (state, action) => {
+        state.registerStudentPending = true;
       })
       .addCase(joinRequests.fulfilled, (state, action) => {
         state.student.ProjectJoiningRequest.push(action.payload.project);
@@ -241,5 +250,6 @@ export const {
   setProjectId,
   setRender,
   clearAddingStudentError,
+  gotoLogin2,
 } = studentSlice.actions;
 export default studentSlice.reducer;

@@ -1,15 +1,57 @@
 import { useSelector } from "react-redux";
-import React, { useState } from "react";
-import { createPresentation } from "../../../redux/features/presentations/presentationSlice";
+import React, { useContext, useState } from "react";
+import Sidebar from "./presentSidebar";
+import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-const PresentationList = () => {
+import { createPresentation } from "../../../redux/features/coordinator/coordinator_slice";
+import Navbar from "../navbar";
+import { useEffect } from "react";
+import { fetchAllPresentations } from "../../../redux/features/coordinator/coordPresentationSlice";
+import { NavbarContext } from "../navbarContext";
+import DeleteConfirmation from "./confirm";
+const PresentationList = ({ allPresentations }) => {
   const dispatch = useDispatch();
   const [venue, setVenue] = useState("");
+  const [isActive, setIsActive] = useState(false);
   const [date, setDate] = useState("");
   const [projectId, setProjectId] = useState("");
+
+  const router = useRouter();
+  const {
+    editPresentationId,
+    setEditPresentationId,
+    setViewMorePresentationLoading,
+    viewMorePresentationId,
+    setViewMorePresentationId,
+    list,
+    setList,
+  } = useContext(NavbarContext);
+
   const allProjects = useSelector(
     (state) => state.coordinator.projects.projects
   );
+
+  const handleSortByTime = () => {
+    const sortedList = [...list].sort((a, b) => {
+      return new Date(a.date) - new Date(b.date);
+    });
+    console.log(sortedList);
+    setList(sortedList);
+  };
+  const handleSortByProject = () => {
+    const sortedList = [...list].sort((a, b) => {
+      return a.projectId - b.projectId;
+    });
+    console.log("sorted list by projects");
+    console.log(sortedList);
+    setList(sortedList);
+  };
+  const handleButtonClick = () => {
+    setIsActive(!isActive);
+  };
+  console.log("these are all presentations");
+  console.log(allPresentations);
+  console.log("these are all the projects ");
   const [isFormVisible, setIsFormVisible] = useState(false);
   const handleCreatePresentation = (e) => {
     e.preventDefault();
@@ -24,92 +66,126 @@ const PresentationList = () => {
       console.log(data);
     }
   };
+  useEffect(() => {
+    dispatch(fetchAllPresentations());
+    setList(allPresentations);
+  }, []);
   console.log("all projects ");
   console.log(allProjects);
   return (
-    <table className="table  mt-8 bg-slate-200 w-full   border-collapse border-slate-500  ">
-      <tbody>
-        <tr className="bg-slate-600  border-blue-500 text-3xl text-white">
-          <th className="border text-center p-2">Project Id</th>
-          <th className="border text-center p-2">Title</th>
-          <th className="border text-center p-2">Admin Student</th>
-          <th className="border text-center p-2">Presentation Date and Time</th>
-          <th className="border text-center p-2"> Presentation Venue</th>
-        </tr>
-        {allProjects?.map((x) => (
-          <tr className="studentlist_tr text-black">
-            <td className="border  cursor-pointer text-center p-2">{x.id}</td>
-            <td className="border  cursor-pointer text-center p-2">
-              {x.title}
-            </td>
-            <td className="border  cursor-pointer text-center p-2">
-              {x.admin_student_email}
-            </td>
-            {x.Presentation_Scedule?.date ? (
-              <>
-                <td className="border  cursor-pointer text-center p-2">
-                  {x.Presentation_Scedule?.date}
-                </td>
-                <td className="border  cursor-pointer text-center p-2">
-                  {x.Presentation_Scedule?.venue}
-                </td>{" "}
-              </>
-            ) : (
-              <td
-                className="border bg-green-700 text-white hover:bg-green-500  cursor-pointer text-center p-2"
-                onClick={() => {
-                  setProjectId(x.id);
-                  setIsFormVisible(true);
-                }}
-              >
-                Add Presentation
-              </td>
-            )}
-          </tr>
-        ))}
-      </tbody>
-      {isFormVisible && (
-        <div className="bg-white absolute top-1/2 left-1/2 transform w-96 -translate-x-1/2 -translate-y-1/2 p-4 rounded-lg shadow-lg">
-          <form className="flex flex-col gap-4 relative">
-            <div className="flex items-center justify-between xl:text-xl">
-              <label htmlFor="presentation-date">Presentation Date:</label>
-              <span
-                onClick={() => setIsFormVisible(false)}
-                className="text-2xl text-red-600 cursor-pointer"
-              >
-                <i class="fa fa-close" aria-hidden="true"></i>
+    <div className="presentationLists">
+      <Navbar />
+      <div className="allPresentationsLeft">
+        <Sidebar />
+      </div>
+      <div className="allPresentationsRight ml-14 mr-4">
+        {list.length > 0 ? (
+          <div className="allPresentations p-4">
+            <div className="flex  p-4">
+              <span className="text-3xl text-blue-900">
+                All Presentation Assigned
               </span>
+              <div
+                className={`dropdown ${
+                  isActive ? "active" : ""
+                } absolute top-40 right-20`}
+              >
+                <button
+                  className="dropbtn bg-blue-600 rounded-lg hover:bg-blue-500"
+                  onClick={handleButtonClick}
+                >
+                  Sort By
+                </button>
+                <ul className="dropdown-content p-3 shadow-xl rounded-lg">
+                  <li
+                    className=" cursor-pointer hover:underline"
+                    onClick={() => handleSortByTime()}
+                  >
+                    Sort By Time
+                  </li>
+                  <li className=" cursor-pointer hover:underline">
+                    Sort By Status
+                  </li>
+                  <li
+                    className=" cursor-pointer hover:underline"
+                    onClick={() => handleSortByProject()}
+                  >
+                    Sort By Project
+                  </li>
+                  <li className=" cursor-pointer hover:underline">
+                    Sort By Panel
+                  </li>
+                </ul>
+              </div>
             </div>
 
-            <input
-              type="text"
-              placeholder="write venue here"
-              value={venue}
-              onChange={(e) => setVenue(e.target.value)}
-              id="presentation-date"
-              className="border p-2 rounded-lg outline-blue-700"
-            />
-            <label htmlFor="">select date and time</label>
-            <input
-              type="datetime-local"
-              className="border p-2 rounded-lg outline-blue-700"
-              onChange={(e) => setDate(e.target.value)}
-            />
-            <button
-              onClick={(e) => {
-                console.log("clicked");
-                handleCreatePresentation(e);
-                console.log(date);
-                console.log(projectId);
-              }}
-              className="bg-green-700 text-white p-2 rounded-lg hover:bg-green-500 cursor-pointer"
-            >
-              submit
-            </button>
-          </form>
-        </div>
-      )}
-    </table>
+            <table className="table presentationListTable  w-full   border-collapse border-slate-500  ">
+              <tbody>
+                <tr className="  border-blue-500 text-xl">
+                  <th className="border text-center p-2">Title</th>
+                  <th className="border text-center p-2">Number</th>
+                  <th className="border text-center p-2">Status</th>
+                  <th className="border text-center p-2">Date and Time</th>
+                  <th className="border text-center p-2">Venue</th>
+                  <th className="border text-center p-2">actions</th>
+                </tr>
+                {list?.map((x) => (
+                  <tr className="studentlist_tr text-black">
+                    <td className="border  cursor-pointer text-center p-2">
+                      {x?.title}
+                    </td>
+                    <td className="border  cursor-pointer text-center p-2">
+                      {x?.Presentation_number}
+                    </td>
+                    <td className="border  cursor-pointer text-center p-2">
+                      {x?.status}
+                    </td>
+                    <td className="border  cursor-pointer text-center p-2">
+                      {new Date(x?.date).toLocaleString()}
+                    </td>
+                    <td className="border  cursor-pointer text-center p-2">
+                      {x?.venue}
+                    </td>
+                    <td className="border flex  justify-between  cursor-pointer text-center p-2">
+                      <span
+                        onClick={() => {
+                          setViewMorePresentationId(x?.id);
+                          setViewMorePresentationLoading(true);
+                          router.push("/coordinator/presentations/viewMore");
+                        }}
+                        class="tooltip"
+                      >
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+                        <span class="tooltiptext">viewmore</span>
+                      </span>
+                      <span class="tooltip">
+                        <DeleteConfirmation id={x?.id} />
+                        <span class="tooltiptext">Delete</span>
+                      </span>
+                      <span
+                        onClick={() => {
+                          setEditPresentationId(x?.id);
+                          router.push("/coordinator/presentations/edit");
+                        }}
+                        class="tooltip"
+                      >
+                        <i class="fa fa-edit" aria-hidden="true"></i>
+                        <span class="tooltiptext">Edit</span>
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div>
+            {" "}
+            <span>No presentation was found</span>{" "}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 export default PresentationList;

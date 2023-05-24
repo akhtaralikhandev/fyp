@@ -8,8 +8,11 @@ const handler = async (req, res) => {
         where: { id: parseInt(id) },
         include: {
           employee: true,
+
           Panel: true,
-          Presentation_Scedule: true,
+          Presentation_Scedule: {
+            include: { Rubrics: true },
+          },
           student_request: {
             include: {
               student: true,

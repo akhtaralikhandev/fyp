@@ -14,7 +14,7 @@ const AllProjects = () => {
 
   return (
     <div>
-      {projects.length > 0 ? (
+      {projects?.length > 0 ? (
         <table className="table  mt-8 bg-slate-200 w-full   border-collapse border-slate-500  ">
           <tbody>
             <tr className="bg-slate-600  border-blue-500 text-3xl text-white">

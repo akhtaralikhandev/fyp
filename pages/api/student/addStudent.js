@@ -35,7 +35,7 @@ const handler = async (req, res) => {
         },
       });
       if (alreadyPart)
-        return res.status(404).json("student already part of a group");
+        return res.status(403).json("student already part of a group");
       const student = await prisma.student.update({
         where: { reg_no: parseInt(reg_no) },
         data: {

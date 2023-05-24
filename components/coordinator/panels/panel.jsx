@@ -21,7 +21,7 @@ const Panel = ({ panel }) => {
             setId(panel.id);
             setViewMore(true);
           }}
-          className="bg-green-700 p-2 rounded-lg text-white cursor-pointer"
+          className=" p-2 rounded-lg  bg-blue-600 text-white  hover:bg-blue-400 cursor-pointer"
         >
           view more
         </span>

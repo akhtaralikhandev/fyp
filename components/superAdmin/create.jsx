@@ -2,12 +2,14 @@ import { useFormik, Field } from "formik";
 import { useRouter } from "next/router";
 import * as Yup from "yup";
 import { createDepartement } from "../../lib/department/create";
+import { useState } from "react";
 const options = [
   { value: "FME", label: "FME" },
   { value: "FCSE", label: "FCSE" },
   { value: "FEE", label: "FEE" },
 ];
 const Create_depart = () => {
+  const [addAnother, setAddAnother] = useState(false);
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -55,39 +57,68 @@ const Create_depart = () => {
                 ""
               )}
             </div>
-            <div className="flex flex-col w-full">
-              <select
-                id="name"
-                name="name"
-                className="p-3 outline-blue-500"
-                defaultValue={"FME"}
-                value={formik.values.name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              >
-                {options.map((option) => (
-                  <option
-                    defaultValue={"FME"}
-                    key={option.value}
-                    value={option.value}
-                  >
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              {formik.touched.name && formik.errors.name ? (
-                <p className="text-red-600">{formik.errors.name}</p>
+            <>
+              {addAnother ? (
+                <div className="flex flex-col w-full">
+                  <input
+                    type="name"
+                    id="name"
+                    name="name"
+                    className="p-3 outline-blue-500"
+                    placeholder="Plz write department name "
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.touched.name && formik.errors.name ? (
+                    <p className="text-red-600">{formik.errors.name}</p>
+                  ) : (
+                    ""
+                  )}
+                </div>
               ) : (
-                ""
+                <div className="flex flex-col w-full">
+                  <select
+                    id="name"
+                    name="name"
+                    className="p-3 outline-blue-500"
+                    defaultValue={"FME"}
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  >
+                    {options.map((option) => (
+                      <option
+                        defaultValue={"FME"}
+                        key={option.value}
+                        value={option.value}
+                      >
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  {formik.touched.name && formik.errors.name ? (
+                    <p className="text-red-600">{formik.errors.name}</p>
+                  ) : (
+                    ""
+                  )}
+                </div>
               )}
-            </div>
+            </>
             <div className="flex  items-center justify-between w-full">
               <button
                 className="bg-blue-600 text-white text-xl p-2 rounded-xl w-24"
                 type="submit"
               >
                 Submit
-              </button>{" "}
+              </button>
+              <button
+                className="bg-blue-600 text-white text-xl p-2 rounded-xl w-48"
+                type="submit"
+                onClick={() => setAddAnother(!addAnother)}
+              >
+                {addAnother ? "Select from" : "Write One"}
+              </button>
               <div></div>
             </div>
           </div>
