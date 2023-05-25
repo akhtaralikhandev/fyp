@@ -21,7 +21,7 @@ export const registerStudent = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const resp = await axios.post(
-        `process.env.NOW_URL/api/student/register`,
+        `process.env.NOW_URL`,
 
         data,
         {
