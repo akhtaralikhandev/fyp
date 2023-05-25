@@ -15,19 +15,20 @@ const initialState = {
   login: false,
   registerStudentPending: false,
 };
-const URL = "http://localhost:3000/api";
+const BASE_URL = process.env.BASE_URL; // Assuming you have BASE_URL defined in your environment variables
+const URL = `${BASE_URL}/api`; // Concatenate the BASE_URL with the endpoint
 export const registerStudent = createAsyncThunk(
   "createStudent",
   async (data, thunkAPI) => {
     try {
       const resp = await axios.post(
-        process.env.NOW_URL,
+        `${URL}/student/register`, // Use the complete URL including the endpoint
 
         data,
         {
           withCredentials: true,
           headers: {
-            "Access-Control-Allow-Origin": `${URL}`,
+            "Access-Control-Allow-Origin": URL,
           },
         }
       );
@@ -35,7 +36,7 @@ export const registerStudent = createAsyncThunk(
       return resp.data;
     } catch (error) {
       console.error(error);
-      return thunkAPI.rejectWithValue(error.response.data); // pass the error response data to the rejected state
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
