@@ -22,7 +22,7 @@ export const registerStudent = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const resp = await axios.post(
-        `${process.env.URL}/api/student/register`, // Use the complete URL including the endpoint
+        `/api/student/register`, // Use the complete URL including the endpoint
 
         data,
         {
